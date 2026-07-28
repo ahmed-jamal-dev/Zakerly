@@ -7,13 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.6">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Scalar.AspNetCore" Version="2.16.16" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Zakerly.Application\Zakerly.Application.csproj" />
     <ProjectReference Include="..\Zakerly.Infrastructure\Zakerly.Infrastructure.csproj" />
-    <ProjectReference Include="..\Zakerly.Persistence\Zakerly.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
