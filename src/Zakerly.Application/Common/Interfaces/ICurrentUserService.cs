@@ -1,6 +1,12 @@
+using Zakerly.Domain.Enums;
+
 namespace Zakerly.Application.Common.Interfaces;
 
-public class ICurrentUserService
+public interface ICurrentUserService
 {
-    
+    Guid UserId { get; }
+
+    UserRole Role { get; }
+
+    bool IsAuthenticated { get; }
 }

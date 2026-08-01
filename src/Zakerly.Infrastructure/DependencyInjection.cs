@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Zakerly.Application.Common.Interfaces;
 using Zakerly.Domain.Interfaces.Repositories;
 using Zakerly.Infrastructure.Persistence;
 using Zakerly.Infrastructure.Repositories;
 using Zakerly.Domain.Interfaces.Security;
 using Zakerly.Infrastructure.Security;
+using Zakerly.Infrastructure.Services;
 
 namespace Zakerly.Infrastructure;
 
@@ -22,6 +24,8 @@ public static class DependencyInjection
         {
             options.UseNpgsql(connectionString);
         });
+
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICourseRepository, CourseRepository>();
