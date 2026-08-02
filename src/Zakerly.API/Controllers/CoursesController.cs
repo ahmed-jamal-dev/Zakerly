@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.Application.Features.Courses.CreateCourse;
 using Zakerly.Application.Features.Courses.GetAllCourses;
+using Zakerly.Application.Features.Courses.GetCourseById;
 
 namespace Zakerly.API.Controllers;
 
@@ -17,6 +18,32 @@ public class CoursesController : ControllerBase
         _mediator = mediator;
     }
 
+    // GET: api/v1/courses
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetAllCoursesQuery(),
+            cancellationToken);
+
+        return Ok(result);
+    }
+
+    // GET: api/v1/courses/{id}
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetCourseByIdQuery(id),
+            cancellationToken);
+
+        return Ok(result);
+    }
+
+    // POST: api/v1/courses
     [Authorize(Roles = "Instructor")]
     [HttpPost]
     public async Task<IActionResult> CreateCourse(
@@ -30,19 +57,5 @@ public class CoursesController : ControllerBase
         return Created(
             $"/api/v1/courses/{response.CourseId}",
             response);
-    }
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var result = await _mediator.Send(
-            new GetAllCoursesQuery());
-
-        return Ok(result);
-    }
-//
-    [HttpGet("{id:guid}")]
-    public IActionResult GetCourseById(Guid id)
-    {
-        return Ok();
     }
 }
