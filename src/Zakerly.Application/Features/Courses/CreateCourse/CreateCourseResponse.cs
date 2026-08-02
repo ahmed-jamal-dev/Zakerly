@@ -1,6 +1,7 @@
 namespace Zakerly.Application.Features.Courses.CreateCourse;
 
-public class CreateCourseResponse
-{
-    
-}
+public record CreateCourseResponse(
+    Guid CourseId,
+    string Title,
+    bool IsPublished
+);

@@ -27,7 +27,6 @@ public class LoginCommandHandler
         var user = await _userRepository.GetByEmailAsync(
             request.Email,
             cancellationToken);
-
         if (user is null)
             throw new Exception("Invalid email or password.");
 
@@ -39,7 +38,6 @@ public class LoginCommandHandler
         }
 
         var token = _jwtProvider.Generate(user);
-
         return new LoginResponse(
             user.Id,
             user.FullName,

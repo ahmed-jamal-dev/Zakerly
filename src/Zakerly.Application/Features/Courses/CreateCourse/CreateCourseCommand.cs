@@ -1,6 +1,6 @@
 namespace Zakerly.Application.Features.Courses.CreateCourse;
-
-public class CreateCourseCommand
-{
-    
-}
+using MediatR;
+public record CreateCourseCommand(
+    string Title,
+    string Description
+) :  IRequest<CreateCourseResponse>;
