@@ -48,4 +48,14 @@ public class Course : BaseEntity
         CreatedAt = DateTime.UtcNow;
 
     }
+    
+    
+    public void Update(
+        string title,
+        string description)
+    {
+        Title = title;
+        Description = description;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

@@ -37,4 +37,12 @@ public class CourseRepository : ICourseRepository
                 c.Id == id,
                 cancellationToken);
     }
+    public async Task UpdateAsync(
+        Course course,
+        CancellationToken cancellationToken)
+    {
+        _context.Courses.Update(course);
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

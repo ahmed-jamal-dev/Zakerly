@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Zakerly.Application.Features.Courses.CreateCourse;
 using Zakerly.Application.Features.Courses.GetAllCourses;
 using Zakerly.Application.Features.Courses.GetCourseById;
+using Zakerly.Application.Features.Courses.UpdateCourse;
 
 namespace Zakerly.API.Controllers;
 
@@ -58,4 +59,20 @@ public class CoursesController : ControllerBase
             $"/api/v1/courses/{response.CourseId}",
             response);
     }
-}
+    
+    // PUT /api/v1/courses/{id}
+[HttpPut("{id:guid}")]
+public async Task<IActionResult> Update(
+    Guid id,
+    [FromBody] UpdateCourseCommand request,
+    CancellationToken cancellationToken)
+{
+    var command = new UpdateCourseCommand(
+        id,
+        request.Title,
+        request.Description);
+
+    var result = await _mediator.Send(command, cancellationToken);
+
+    return Ok(result);
+}}
