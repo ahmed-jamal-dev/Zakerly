@@ -13,10 +13,17 @@ public class CourseRepository : ICourseRepository
     {
         _context = context;
     }
-
+    
     public async Task AddAsync(Course course, CancellationToken cancellationToken)
     {
         await _context.Courses.AddAsync(course, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+    }
+    public async Task<List<Course>> GetAllAsync(
+        CancellationToken cancellationToken)
+    {
+        return await _context.Courses
+            .Include(c => c.Instructor)
+            .ToListAsync(cancellationToken);
     }
 }

@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.Application.Features.Courses.CreateCourse;
+using Zakerly.Application.Features.Courses.GetAllCourses;
 
 namespace Zakerly.API.Controllers;
 
@@ -30,7 +31,15 @@ public class CoursesController : ControllerBase
             $"/api/v1/courses/{response.CourseId}",
             response);
     }
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var result = await _mediator.Send(
+            new GetAllCoursesQuery());
 
+        return Ok(result);
+    }
+//
     [HttpGet("{id:guid}")]
     public IActionResult GetCourseById(Guid id)
     {
