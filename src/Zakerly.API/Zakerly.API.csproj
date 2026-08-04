@@ -21,4 +21,9 @@
     <ProjectReference Include="..\Zakerly.Infrastructure\Zakerly.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Contracts\Authentication\" />
+    <Folder Include="Contracts\Courses\" />
+  </ItemGroup>
+
 </Project>

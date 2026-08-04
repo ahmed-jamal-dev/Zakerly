@@ -25,4 +25,19 @@ public class Lesson : BaseEntity
         CourseId = courseId;
         CreatedAt = DateTime.UtcNow;
     }
+    public void Update(
+
+        string title,
+
+        string content)
+
+    {
+
+        Title = title;
+
+        Content = content;
+
+        UpdatedAt = DateTime.UtcNow;
+
+    }
 }
