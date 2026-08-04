@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.Application.Features.Courses.CreateCourse;
+using Zakerly.Application.Features.Courses.DeleteCourse;
 using Zakerly.Application.Features.Courses.GetAllCourses;
 using Zakerly.Application.Features.Courses.GetCourseById;
 using Zakerly.Application.Features.Courses.UpdateCourse;
@@ -75,4 +76,18 @@ public async Task<IActionResult> Update(
     var result = await _mediator.Send(command, cancellationToken);
 
     return Ok(result);
-}}
+}
+// DELETE /api/v1/courses/{courseId}
+[Authorize(Roles = "Instructor")]
+[HttpDelete("{id:guid}")]
+public async Task<IActionResult> Delete(
+    Guid id,
+    CancellationToken cancellationToken)
+{
+    await _mediator.Send(
+        new DeleteCourseCommand(id),
+        cancellationToken);
+
+    return NoContent();
+}
+}

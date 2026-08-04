@@ -8,4 +8,5 @@ public interface ICourseRepository
     Task<List<Course>> GetAllAsync(CancellationToken cancellationToken);
     Task<Course?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task UpdateAsync(Course course, CancellationToken cancellationToken);
+    Task DeleteAsync(Course course, CancellationToken cancellationToken);
 }

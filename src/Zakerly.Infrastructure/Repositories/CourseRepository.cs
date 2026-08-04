@@ -45,4 +45,10 @@ public class CourseRepository : ICourseRepository
 
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task DeleteAsync(Course course, CancellationToken cancellationToken)
+    {
+        _context.Courses.Remove(course);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }
