@@ -1,4 +1,5 @@
 using MediatR;
+using Zakerly.Application.Common.Exceptions;
 using Zakerly.Domain.Interfaces.Repositories;
 using Zakerly.Domain.Interfaces.Security;
 
@@ -28,13 +29,13 @@ public class LoginCommandHandler
             request.Email,
             cancellationToken);
         if (user is null)
-            throw new Exception("Invalid email or password.");
-
+            throw new InvalidCredentialsException();
         if (!_passwordHasher.Verify(
                 request.Password,
                 user.PasswordHash))
         {
-            throw new Exception("Invalid email or password.");
+            throw new InvalidCredentialsException();
+            
         }
 
         var token = _jwtProvider.Generate(user);

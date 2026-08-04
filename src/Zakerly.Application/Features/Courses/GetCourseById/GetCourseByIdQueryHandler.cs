@@ -1,4 +1,5 @@
 using MediatR;
+using Zakerly.Application.Common.Exceptions;
 using Zakerly.Domain.Interfaces.Repositories;
 
 namespace Zakerly.Application.Features.Courses.GetCourseById;
@@ -23,8 +24,11 @@ public class GetCourseByIdQueryHandler
             cancellationToken);
 
         if (course is null)
-            throw new Exception("Course not found.");
-
+            throw new NotFoundException(
+                nameof(course),
+                request.CourseId
+                );
+        
         return new GetCourseByIdResponse(
             course.Id,
             course.Title,

@@ -1,4 +1,5 @@
 using MediatR;
+using Zakerly.Application.Common.Exceptions;
 using Zakerly.Domain.Entities;
 using Zakerly.Domain.Enums;
 using Zakerly.Domain.Interfaces.Repositories;
@@ -24,8 +25,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterR
         CancellationToken cancellationToken)
     {
         if (await _userRepository.ExistsByEmailAsync(request.Email, cancellationToken))
-            throw new Exception("Email already exists.");
-
+            throw new ConflictException
+            ("Email already exists.");
         var passwordHash = _passwordHasher.Hash(request.Password);
         
         var user = new User(

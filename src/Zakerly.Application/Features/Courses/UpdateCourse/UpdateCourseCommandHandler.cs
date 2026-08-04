@@ -1,4 +1,5 @@
 using MediatR;
+using Zakerly.Application.Common.Exceptions;
 using Zakerly.Application.Common.Interfaces;
 using Zakerly.Domain.Interfaces.Repositories;
 
@@ -27,10 +28,13 @@ public class UpdateCourseCommandHandler
             cancellationToken);
 
         if (course is null)
-            throw new Exception("Course not found.");
+            throw new NotFoundException(
+                nameof(course),
+                request.CourseId
+                );
 
         if (course.InstructorId != _currentUserService.UserId)
-            throw new Exception("You are not allowed to update this course.");
+            throw new ForbiddenException("You are not allowed to update this course.");
 
         course.Update(
             request.Title,
