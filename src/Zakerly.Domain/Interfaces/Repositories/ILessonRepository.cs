@@ -12,5 +12,8 @@ public interface ILessonRepository
         Guid courseId,
         CancellationToken cancellationToken
     );
+    Task<Lesson?> GetByIdAsync(
+        Guid lessonId,
+        CancellationToken cancellationToken);
 
 }

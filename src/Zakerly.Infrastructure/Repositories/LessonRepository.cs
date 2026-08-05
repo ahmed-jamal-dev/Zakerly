@@ -35,4 +35,13 @@ public class LessonRepository : ILessonRepository
             .OrderBy(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
     }
+    public async Task<Lesson?> GetByIdAsync(
+        Guid lessonId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Lessons
+            .FirstOrDefaultAsync(
+                x => x.Id == lessonId,
+                cancellationToken);
+    }
 }
