@@ -44,4 +44,20 @@ public class LessonRepository : ILessonRepository
                 x => x.Id == lessonId,
                 cancellationToken);
     }
+    public async Task UpdateAsync(
+        Lesson lesson,
+        CancellationToken cancellationToken)
+    {
+        _context.Lessons.Update(lesson);
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+    public async Task DeleteAsync(
+        Lesson lesson,
+        CancellationToken cancellationToken)
+    {
+        _context.Lessons.Remove(lesson);
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }
