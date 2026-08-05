@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Assignments;
 using Zakerly.Application.Features.Assignments.CreateAssignment;
+using Zakerly.Application.Features.Assignments.GetAllAssignments;
 
 namespace Zakerly.API.Controllers;
 
@@ -16,7 +17,19 @@ public class AssignmentsController : ControllerBase
     {
         _mediator = mediator;
     }
+    // GET: api/v1/courses/{courseId}/assignments
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        Guid courseId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetAllAssignmentsQuery(courseId),
+            cancellationToken);
 
+        return Ok(result);
+    }
+    // POST: /api/v1/courses/{courseId}/assignments
     [Authorize(Roles = "Instructor")]
     [HttpPost]
     public async Task<IActionResult> Create(
@@ -37,4 +50,5 @@ public class AssignmentsController : ControllerBase
             $"/api/v1/assignments/{response.AssignmentId}",
             response);
     }
+    
 }
