@@ -7,4 +7,10 @@ public interface ILessonRepository
     Task AddAsync(
         Lesson lesson,
         CancellationToken cancellationToken);
+
+    Task<List<Lesson>> GetAllByCourseIdAsync(
+        Guid courseId,
+        CancellationToken cancellationToken
+    );
+
 }

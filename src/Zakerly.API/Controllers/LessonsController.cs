@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Lessons;
 using Zakerly.Application.Features.Lessons.CreateLesson;
-
+using Zakerly.Application.Features.Lessons.GetAllLessons;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -16,7 +16,18 @@ public class LessonsController : ControllerBase
     {
         _mediator = mediator;
     }
-
+    // GET: api/v1/courses/{courseId}/lessons
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        Guid courseId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetAllLessonsQuery(courseId),
+            cancellationToken);
+        return Ok(result);
+    }
+    // POST: api/v1/courses/{courseId}/lessons
     [Authorize(Roles = "Instructor")]
     [HttpPost]
     public async Task<IActionResult> Create(

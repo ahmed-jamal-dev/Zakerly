@@ -1,4 +1,5 @@
 using MediatR;
+using Zakerly.Application.Common.Exceptions;
 using Zakerly.Application.Common.Interfaces;
 using Zakerly.Domain.Entities;
 using Zakerly.Domain.Enums;
@@ -26,15 +27,15 @@ public class CreateCourseCommandHandler
     {
         if (!_currentUser.IsAuthenticated)
         {
-            throw new UnauthorizedAccessException();
+            throw new UnauthorizedException(
+                "Authentication is required to create a course.");
         }
 
         if (_currentUser.Role != UserRole.Instructor)
         {
-            throw new UnauthorizedAccessException(
+            throw new ForbiddenException(
                 "Only instructors can create courses.");
         }
-
         var course = new Course(
             request.Title,
             request.Description,
