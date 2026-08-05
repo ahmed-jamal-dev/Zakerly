@@ -25,4 +25,12 @@ public class Assignment : BaseEntity
         CourseId = courseId;
         CreatedAt = DateTime.UtcNow;
     }
+    public void Update(
+        string title,
+        string description)
+    {
+        Title = title;
+        Description = description;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Assignments;
 using Zakerly.Application.Features.Assignments.CreateAssignment;
+using Zakerly.Application.Features.Assignments.DeleteAssignment;
 using Zakerly.Application.Features.Assignments.GetAllAssignments;
 using Zakerly.Application.Features.Assignments.GetAssignmentById;
+using Zakerly.Application.Features.Assignments.UpdateAssignment;
+
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -61,6 +64,38 @@ public class AssignmentsController : ControllerBase
         return Created(
             $"/api/v1/assignments/{response.AssignmentId}",
             response);
+    }
+    // PUT: /api/v1/assignments/{assignmentId}
+    [Authorize(Roles = "Instructor")]
+    [HttpPut("/api/v1/assignments/{assignmentId:guid}")]
+    public async Task<IActionResult> Update(
+        Guid assignmentId,
+        [FromBody] UpdateAssignmentRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateAssignmentCommand(
+            assignmentId,
+            request.Title,
+            request.Description);
+
+        var result = await _mediator.Send(
+            command,
+            cancellationToken);
+
+        return Ok(result);
+    }
+    // DELETE: /api/v1/assignments/{assignmentId}
+    [Authorize(Roles = "Instructor")]
+    [HttpDelete("/api/v1/assignments/{assignmentId:guid}")]
+    public async Task<IActionResult> Delete(
+        Guid assignmentId,
+        CancellationToken cancellationToken)
+    {
+        await _mediator.Send(
+            new DeleteAssignmentCommand(assignmentId),
+            cancellationToken);
+
+        return NoContent();
     }
     
 }
