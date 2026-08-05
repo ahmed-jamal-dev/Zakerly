@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Assignments;
 using Zakerly.Application.Features.Assignments.CreateAssignment;
 using Zakerly.Application.Features.Assignments.GetAllAssignments;
-
+using Zakerly.Application.Features.Assignments.GetAssignmentById;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -25,6 +25,18 @@ public class AssignmentsController : ControllerBase
     {
         var result = await _mediator.Send(
             new GetAllAssignmentsQuery(courseId),
+            cancellationToken);
+
+        return Ok(result);
+    }
+    // GET: api/v1/assignments/{assignmentId}
+    [HttpGet("/api/v1/assignments/{assignmentId:guid}")]
+    public async Task<IActionResult> GetById(
+        Guid assignmentId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetAssignmentByIdQuery(assignmentId),
             cancellationToken);
 
         return Ok(result);
