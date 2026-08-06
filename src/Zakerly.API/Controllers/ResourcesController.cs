@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Resources;
 using Zakerly.Application.Features.Resources.CreateResource;
-
+using Zakerly.Application.Features.Resources.GetAllResources;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -16,7 +16,19 @@ public class ResourcesController : ControllerBase
     {
         _mediator = mediator;
     }
+    // GET: api/v1/lessons/{lessonId}/resources
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        Guid lessonId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetAllResourcesQuery(lessonId),
+            cancellationToken);
 
+        return Ok(result);
+    }
+    
     // POST: api/v1/lessons/{lessonId}/resources
     [Authorize(Roles = "Instructor")]
     [HttpPost]
