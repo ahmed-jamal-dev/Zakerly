@@ -7,6 +7,7 @@ using Zakerly.Application.Features.Submissions.SubmitAssignment;
 using Zakerly.Application.Features.Submissions.GetAssignmentSubmissions;
 using Zakerly.Application.Features.Submissions.GetSubmissionById;
 using Zakerly.Application.Features.Submissions.GradeSubmission;
+using Zakerly.Application.Features.Submissions.DeleteSubmission;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -96,5 +97,18 @@ public class SubmissionsController : ControllerBase
             cancellationToken);
 
         return Ok(result);
+    }
+    // DELETE: api/v1/submissions/{submissionId}
+    [Authorize(Roles = "Student")]
+    [HttpDelete("/api/v1/submissions/{submissionId:guid}")]
+    public async Task<IActionResult> Delete(
+        Guid submissionId,
+        CancellationToken cancellationToken)
+    {
+        await _mediator.Send(
+            new DeleteSubmissionCommand(submissionId),
+            cancellationToken);
+
+        return NoContent();
     }
 }

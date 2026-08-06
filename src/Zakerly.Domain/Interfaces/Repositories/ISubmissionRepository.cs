@@ -27,5 +27,8 @@ public interface ISubmissionRepository
 
     Task UpdateAsync(
         Submission submission,
-        CancellationToken cancellationToken);    
+        CancellationToken cancellationToken);
+    Task DeleteAsync(
+        Submission submission,
+        CancellationToken cancellationToken);
 }
