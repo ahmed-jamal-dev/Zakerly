@@ -30,4 +30,22 @@ public class Submission : BaseEntity
         StudentId = studentId;
         CreatedAt = DateTime.UtcNow;
     }
+    public void UpdateFile(string filePath)
+    {
+        FilePath = filePath;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void GradeSubmission(
+        decimal grade,
+        string? feedback)
+    {
+        if (grade < 0 || grade > 100)
+            throw new ArgumentOutOfRangeException(nameof(grade));
+        Grade = grade;
+        Feedback = feedback;
+        UpdatedAt = DateTime.UtcNow;
+        
+    }
+    
 }
