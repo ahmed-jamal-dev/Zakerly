@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Submissions;
+using Zakerly.Application.Features.Submissions.GetMySubmissions;
 using Zakerly.Application.Features.Submissions.SubmitAssignment;
 
 namespace Zakerly.API.Controllers;
@@ -37,4 +38,17 @@ public class SubmissionsController : ControllerBase
             $"/api/v1/submissions/{response.SubmissionId}",
             response);
     }
+    // GET: api/v1/submissions/my
+    [Authorize(Roles = "Student")]
+    [HttpGet("/api/v1/submissions/my")]
+    public async Task<IActionResult> GetMySubmissions(
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetMySubmissionsQuery(),
+            cancellationToken);
+
+        return Ok(result);
+    }
+    
 }

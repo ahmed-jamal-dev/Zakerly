@@ -46,10 +46,10 @@ public class SubmissionRepository : ISubmissionRepository
         return await _context.Submissions
             .Include(x => x.Assignment)
             .Where(x => x.StudentId == studentId)
-            .OrderBy(x => x.CreatedAt)
+            .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
     }
-
+    
     public async Task<Submission?> GetByIdAsync(
         Guid submissionId,
         CancellationToken cancellationToken)
