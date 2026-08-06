@@ -73,12 +73,13 @@ public class SubmissionRepository : ISubmissionRepository
             cancellationToken);
     }
 
-    public async Task DeleteAsync(
+    public async Task UpdateAsync(
         Submission submission,
         CancellationToken cancellationToken)
     {
-        _context.Submissions.Remove(submission);
+        _context.Submissions.Update(submission);
 
         await _context.SaveChangesAsync(cancellationToken);
     }
+    
 }

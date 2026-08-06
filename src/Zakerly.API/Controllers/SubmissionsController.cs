@@ -6,6 +6,7 @@ using Zakerly.Application.Features.Submissions.GetMySubmissions;
 using Zakerly.Application.Features.Submissions.SubmitAssignment;
 using Zakerly.Application.Features.Submissions.GetAssignmentSubmissions;
 using Zakerly.Application.Features.Submissions.GetSubmissionById;
+using Zakerly.Application.Features.Submissions.GradeSubmission;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -73,6 +74,25 @@ public class SubmissionsController : ControllerBase
     {
         var result = await _mediator.Send(
             new GetSubmissionByIdQuery(submissionId),
+            cancellationToken);
+
+        return Ok(result);
+    }
+    // PUT: api/v1/submissions/{submissionId}/grade
+    [Authorize(Roles = "Instructor")]
+    [HttpPut("/api/v1/submissions/{submissionId:guid}/grade")]
+    public async Task<IActionResult> Grade(
+        Guid submissionId,
+        [FromBody] GradeSubmissionRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new GradeSubmissionCommand(
+            submissionId,
+            request.Grade,
+            request.Feedback);
+
+        var result = await _mediator.Send(
+            command,
             cancellationToken);
 
         return Ok(result);

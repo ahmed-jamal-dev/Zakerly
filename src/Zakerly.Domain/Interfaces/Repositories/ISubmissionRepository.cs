@@ -25,7 +25,7 @@ public interface ISubmissionRepository
         Guid studentId,
         CancellationToken cancellationToken);
 
-    Task DeleteAsync(
+    Task UpdateAsync(
         Submission submission,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken);    
 }
