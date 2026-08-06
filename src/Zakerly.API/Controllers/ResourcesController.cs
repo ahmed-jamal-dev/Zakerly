@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Resources;
 using Zakerly.Application.Features.Resources.CreateResource;
+using Zakerly.Application.Features.Resources.DeleteResource;
 using Zakerly.Application.Features.Resources.GetAllResources;
 using Zakerly.Application.Features.Resources.GetResourceById;
+using Zakerly.Application.Features.Resources.UpdateResource;
+
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -61,5 +64,38 @@ public class ResourcesController : ControllerBase
         return Created(
             $"/api/v1/resources/{response.ResourceId}",
             response);
+    }
+    
+    // PUT: api/v1/resources/{resourceId}
+    [Authorize(Roles = "Instructor")]
+    [HttpPut("/api/v1/resources/{resourceId:guid}")]
+    public async Task<IActionResult> Update(
+        Guid resourceId,
+        [FromBody] UpdateResourceRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateResourceCommand(
+            resourceId,
+            request.Name,
+            request.FilePath);
+
+        var response = await _mediator.Send(
+            command,
+            cancellationToken);
+
+        return Ok(response);
+    }
+    // DELETE: api/v1/resources/{resourceId}
+    [Authorize(Roles = "Instructor")]
+    [HttpDelete("/api/v1/resources/{resourceId:guid}")]
+    public async Task<IActionResult> Delete(
+        Guid resourceId,
+        CancellationToken cancellationToken)
+    {
+        await _mediator.Send(
+            new DeleteResourceCommand(resourceId),
+            cancellationToken);
+
+        return NoContent();
     }
 }
