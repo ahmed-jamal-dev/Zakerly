@@ -2,8 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.Application.Features.Enrollments.EnrollCourse;
-using Zakerly.Application.Features.Enrollments.GetMyEnrollments;
-
+using Zakerly.Application.Features.Enrollments.GetCourseStudents;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -34,4 +33,17 @@ public class CourseEnrollmentsController : ControllerBase
             response);
     }
     
+    // GET: api/v1/courses/{courseId}/enrollments
+    [Authorize(Roles = "Instructor")]
+    [HttpGet]
+    public async Task<IActionResult> GetCourseStudents(
+        Guid courseId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetCourseStudentsQuery(courseId),
+            cancellationToken);
+
+        return Ok(result);
+    }
 }
