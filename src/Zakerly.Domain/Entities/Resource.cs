@@ -23,4 +23,12 @@ public class Resource: BaseEntity
         LessonId = lessonId;
         CreatedAt = DateTime.UtcNow;
     }
+    public void Update(
+        string name,
+        string filePath)
+    {
+        Name = name;
+        FilePath = filePath;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
