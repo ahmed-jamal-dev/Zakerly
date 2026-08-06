@@ -42,7 +42,7 @@ public class EnrollmentRepository : IEnrollmentRepository
         Guid studentId,
         CancellationToken cancellationToken)
     {
-        return await _context.Enrollments
+        return await _context.Enrollments.Include(x => x.Course)
             .Where(x => x.StudentId == studentId)
             .OrderBy(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
