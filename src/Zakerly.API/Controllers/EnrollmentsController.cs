@@ -2,7 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.Application.Features.Enrollments.GetMyEnrollments;
-
+using Zakerly.Application.Features.Enrollments.CancelEnrollment;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -27,5 +27,18 @@ public class EnrollmentsController : ControllerBase
             cancellationToken);
 
         return Ok(result);
+    }
+    // DELETE: api/v1/enrollments/{enrollmentId}
+    [Authorize(Roles = "Student")]
+    [HttpDelete("{enrollmentId:guid}")]
+    public async Task<IActionResult> CancelEnrollment(
+        Guid enrollmentId,
+        CancellationToken cancellationToken)
+    {
+        await _mediator.Send(
+            new CancelEnrollmentCommand(enrollmentId),
+            cancellationToken);
+
+        return NoContent();
     }
 }
