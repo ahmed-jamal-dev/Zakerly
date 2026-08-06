@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Submissions;
 using Zakerly.Application.Features.Submissions.GetMySubmissions;
 using Zakerly.Application.Features.Submissions.SubmitAssignment;
-
+using Zakerly.Application.Features.Submissions.GetAssignmentSubmissions;
+using Zakerly.Application.Features.Submissions.GetSubmissionById;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -50,5 +51,30 @@ public class SubmissionsController : ControllerBase
 
         return Ok(result);
     }
-    
+    // GET: api/v1/assignments/{assignmentId}/submissions
+    [Authorize(Roles = "Instructor")]
+    [HttpGet]
+    public async Task<IActionResult> GetAssignmentSubmissions(
+        Guid assignmentId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetAssignmentSubmissionsQuery(assignmentId),
+            cancellationToken);
+
+        return Ok(result);
+    }
+    // GET: api/v1/submissions/{submissionId}
+    [Authorize(Roles = "Student,Instructor")]
+    [HttpGet("/api/v1/submissions/{submissionId:guid}")]
+    public async Task<IActionResult> GetById(
+        Guid submissionId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetSubmissionByIdQuery(submissionId),
+            cancellationToken);
+
+        return Ok(result);
+    }
 }
