@@ -36,7 +36,7 @@ public static class DependencyInjection
         services.AddScoped<ISubmissionRepository, SubmissionRepository>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtProvider, JwtProvider>();
-        
+        services.AddScoped<ILessonProgressRepository,LessonProgressRepository>();
         return services;
     }
 }

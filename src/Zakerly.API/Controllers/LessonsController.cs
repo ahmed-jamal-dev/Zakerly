@@ -7,7 +7,7 @@ using Zakerly.Application.Features.Lessons.DeleteLesson;
 using Zakerly.Application.Features.Lessons.GetAllLessons;
 using Zakerly.Application.Features.Lessons.GetLessonById;
 using Zakerly.Application.Features.Lessons.UpdateLesson;
-
+using Zakerly.Application.Features.Lessons.MarkLessonAsCompleted;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
@@ -62,6 +62,22 @@ public class LessonsController : ControllerBase
         return Created(
             $"/api/v1/lessons/{response.LessonId}",
             response);
+    }
+    // POST: api/v1/lessons/{lessonId}/complete
+    [Authorize(Roles = "Student")]
+    [HttpPost("/api/v1/lessons/{lessonId:guid}/complete")]
+    public async Task<IActionResult> MarkAsCompleted(
+        Guid lessonId,
+        CancellationToken cancellationToken)
+    {
+        var command = new MarkLessonAsCompletedCommand(
+            lessonId);
+
+        var result = await _mediator.Send(
+            command,
+            cancellationToken);
+
+        return Ok(result);
     }
     // PUT: api/v1/lessons/{lessonId}
     [Authorize(Roles = "Instructor")]

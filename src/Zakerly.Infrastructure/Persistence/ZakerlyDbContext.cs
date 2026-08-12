@@ -23,7 +23,8 @@ public class ZakerlyDbContext : DbContext
     public DbSet<Submission> Submissions => Set<Submission>();
 
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
-
+    
+    public DbSet<LessonProgress> LessonProgresses => Set<LessonProgress>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ZakerlyDbContext).Assembly);

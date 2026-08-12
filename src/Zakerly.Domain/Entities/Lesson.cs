@@ -13,7 +13,8 @@ public class Lesson : BaseEntity
     public Course Course { get; private set; } = null!;
 
     public ICollection<Resource> Resources { get; private set; } = [];
-
+    
+    public ICollection<LessonProgress> Progresses { get; private set; } = [];
     private Lesson()
     {
     }
