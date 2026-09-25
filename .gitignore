@@ -14,3 +14,7 @@ obj/
 
 # macOS
 .DS_Store
+
+#Docs
+.md
+/docs
