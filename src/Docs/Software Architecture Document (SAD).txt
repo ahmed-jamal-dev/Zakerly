@@ -1,0 +1,772 @@
+| **Field** | **Value** |
+| --- | --- |
+| Project Name | Zakerly |
+| Version | 1.0 |
+| Status | Draft |
+| Authors | Benho Jr |
+| Date | July 2026 |
+
+# **1-Technical Overview**
+
+Zakerly is a web-based Learning Management System (LMS) built using ASP.NET Core with a hybrid architecture that combines Clean Architecture and Vertical Slice Architecture. The system exposes RESTful APIs for managing users, courses, lessons, enrollments, assignments, and administrative operations. It is designed to ensure maintainability, scalability, feature isolation, and a clear separation of concerns. PostgreSQL is used as the primary relational database, while JWT Bearer Authentication is used to authenticate users and authorize access to protected resources.
+
+# **2-Architecture Overview**
+
+Zakerly adopts a hybrid architectural approach that combines **Clean Architecture** and **Vertical Slice Architecture**.
+
+Clean Architecture separates the application into independent layers, ensuring that the business logic remains isolated from infrastructure concerns such as databases, authentication, and external services. This approach improves maintainability, testability, and long-term scalability.
+
+Vertical Slice Architecture complements Clean Architecture by organizing the application around business features rather than technical layers. Each feature is implemented as an independent slice containing its own commands, queries, handlers, validators, DTOs, and endpoints. This minimizes coupling between features and allows the development team to work on different modules simultaneously with minimal conflict.
+
+By combining these two architectural styles, Zakerly achieves a modular, scalable, and maintainable codebase while keeping each feature self-contained and easy to evolve over time.
+
+# **3-Architectural Principles**
+
+| **Principle** | **Description** |
+| --- | --- |
+| Separation of Concerns | Each layer has a single responsibility. |
+| Dependency Inversion | Inner layers do not depend on outer layers. |
+| Feature Isolation | Every business feature is implemented independently as a Vertical Slice. |
+| Single Responsibility | Each class should have one clear responsibility. |
+| Dependency Injection | Dependencies are resolved through the built-in ASP.NET Core DI container. |
+| Domain-Centric Design | Business rules are implemented inside the Domain layer. |
+
+# **4-Architectural Layers**
+
+| **Layer** | **Responsibility** |
+| --- | --- |
+| API | Exposes RESTful API endpoints, receives HTTP requests, and returns HTTP responses. |
+| Application | Implements business use cases through Commands, Queries, Handlers, Validators, and DTOs. |
+| Domain | Contains the core business entities, domain rules, interfaces, value objects, and enums. |
+| Infrastructure | Provides implementations for data access, authentication, persistence, file storage, and external services. |
+
+# **5-Technology Stack**
+
+| **Component** | **Technology** |
+| --- | --- |
+| Programming Language | C# |
+| Framework | ASP.NET Core 9 |
+| Architecture | Clean Architecture + Vertical Slice |
+| ORM | Entity Framework Core |
+| Database | PostgreSQL |
+| Authentication | JWT Bearer Authentication |
+| Password Hashing | BCrypt |
+| API Documentation | Swagger (OpenAPI) |
+| Validation | FluentValidation |
+| Object Mapping | Mapster  |
+| Logging | ASP.NET Core Logging |
+| Containerization | Docker |
+| Version Control | Git |
+| Mediation | MediatR |
+
+# **6-Project Structure**
+
+The solution is organized into multiple projects following the principles of Clean Architecture. Each project has a dedicated responsibility, promoting modularity, maintainability, and separation of concerns.
+
+| **Project** | **Responsibility** |
+| --- | --- |
+| **Zakerly.API** | Entry point of the application. Exposes RESTful API endpoints, configures dependency injection, middleware, authentication, and application startup. |
+| **Zakerly.Application** | Contains application use cases, Commands, Queries, Handlers, DTOs, Validators, and application interfaces organized into independent Vertical Slices. |
+| **Zakerly.Domain** | Contains the core business entities, enums, value objects, domain interfaces, and business rules independent of external frameworks. |
+| **Zakerly.Infrastructure** | Implements data access, Entity Framework Core, authentication, file storage, and other external service integrations. |
+
+```csharp
+Zakerly
+│
+└── src
+   ├── Zakerly.API
+   ├── Zakerly.Application
+   ├── Zakerly.Domain
+   └── Zakerly.Infrastructure
+```
+
+# **7-High-Level System Design**
+
+### **Request Flow**
+
+```csharp
+Client
+
+↓
+
+ASP.NET Core API
+
+↓
+
+Authentication & Authorization
+
+↓
+
+Vertical Slice (Command / Query)
+
+↓
+
+Application Layer
+
+↓
+
+Domain Layer
+
+↓
+
+Infrastructure
+
+↓
+
+PostgreSQL
+
+↓
+
+Response
+```
+
+Every request received by the API is first authenticated and authorized (when required). The request is then routed to the appropriate Vertical Slice, where the corresponding Command or Query Handler processes the business logic. Domain entities enforce business rules, while Infrastructure is responsible for persistence and communication with external services. Finally, the processed result is returned to the client as an HTTP response.
+
+### **Request Lifecycle**
+
+| **Step** | **Description** |
+| --- | --- |
+| 1 | Client sends HTTP Request |
+| 2 | Authentication Middleware validates JWT |
+| 3 | Authorization Policy is evaluated |
+| 4 | Endpoint receives the request |
+| 5 | Validator validates the request model |
+| 6 | Command/Query Handler executes business logic |
+| 7 | Entity Framework Core accesses PostgreSQL |
+| 8 | Response DTO is returned to the client |
+
+# **8- Core System Components**
+
+| **Component** | **Description** |
+| --- | --- |
+| **API Layer** | Exposes RESTful endpoints and handles incoming HTTP requests. |
+| **Authentication Service** | Authenticates users and issues JWT access tokens. |
+| **Application Layer** | Coordinates business use cases through Commands and Queries. |
+| **Domain Layer** | Enforces business rules and represents the core domain model. |
+| **Infrastructure Layer** | Handles persistence, authentication implementation, and external integrations. |
+| **PostgreSQL Database** | Stores all persistent application data. |
+
+Each component has a clearly defined responsibility and communicates with other components through well-defined interfaces. This design minimizes coupling and improves maintainability, testability, and scalability.
+
+# **9- Feature Modules**
+
+## **9.1 Authentication Module**
+
+### **Purpose**
+
+Responsible for user authentication and identity management.
+
+### **Responsibilities**
+
+- Register new users.
+- Authenticate existing users.
+- Generate JWT tokens.
+- Verify passwords.
+- Manage user identity.
+
+### **Main Components**
+
+| **Component** | **Responsibility** |
+| --- | --- |
+| Register Feature | Handles user registration. |
+| Login Feature | Handles user authentication. |
+| JWT Service | Generates access tokens. |
+| Password Hasher | Hashes and verifies passwords. |
+
+### **Related Vertical Slices**
+
+```csharp
+Authentication
+├── Register
+└── Login
+```
+
+### **Dependencies**
+
+- User Entity
+- JWT Service
+- BCrypt
+- FluentValidation
+
+## 9.2 User Management Module
+
+### **Purpose**
+
+Responsible for managing user profile information and account settings while allowing administrators to manage user accounts.
+
+### **Responsibilities**
+
+- Retrieve user profile.
+- Update profile information.
+- Change user password.
+- View user accounts.
+- Activate or deactivate user accounts.
+- Delete user accounts.
+
+### **Main Components**
+
+| **Component** | **Responsibility** |
+| --- | --- |
+| Get Profile Feature | Retrieves the authenticated user’s profile information. |
+| Update Profile Feature | Updates user profile details. |
+| Change Password Feature | Allows users to change their password securely. |
+
+### **Related Vertical Slices**
+
+```csharp
+UserManagement
+├── GetProfile
+├── UpdateProfile
+└── ChangePassword
+```
+
+### **Dependencies**
+
+- User Entity
+- User Repository
+- BCrypt
+- FluentValidation
+
+## **9.3 Course Management Module**
+
+### **Purpose**
+
+Responsible for creating, managing, publishing, and maintaining courses while allowing students to browse available courses.
+
+### **Responsibilities**
+
+- Create courses.
+- Update course information.
+- Publish or unpublish courses.
+- Delete courses.
+- Browse published courses.
+- Search courses.
+
+### **Main Components**
+
+| **Component** | **Responsibility** |
+| --- | --- |
+| Create Course Feature | Creates a new course. |
+| Update Course Feature | Updates existing course information. |
+| Publish Course Feature | Publishes or unpublishes a course. |
+| Delete Course Feature | Removes a course. |
+| Browse Courses Feature | Retrieves published courses. |
+| Search Courses Feature | Searches courses by title or category. |
+
+### **Related Vertical Slices**
+
+```csharp
+Courses
+├── CreateCourse
+├── UpdateCourse
+├── DeleteCourse
+├── PublishCourse
+├── GetCourses
+└── SearchCourses
+```
+
+### **Dependencies**
+
+- Course Entity
+- User Entity (Instructor)
+- Course Repository
+- FluentValidation
+
+## **9.4 Lesson Management Module**
+
+### **Purpose**
+
+Responsible for organizing course lessons and managing learning materials.
+
+### **Responsibilities**
+
+- Create lessons.
+- Update lessons.
+- Delete lessons.
+- Upload learning resources.
+- View lessons.
+
+### **Main Components**
+
+| **Component** | **Responsibility** |
+| --- | --- |
+| Create Lesson Feature | Creates a lesson. |
+| Update Lesson Feature | Updates lesson details. |
+| Delete Lesson Feature | Removes a lesson. |
+| Upload Resource Feature | Uploads learning materials. |
+| Get Lessons Feature | Retrieves course lessons. |
+
+### **Related Vertical Slices**
+
+```csharp
+Lessons
+├── CreateLesson
+├── UpdateLesson
+├── DeleteLesson
+├── UploadResource
+└── GetLessons
+```
+
+### **Dependencies**
+
+- Lesson Entity
+- Course Entity
+- File Storage Service
+- FluentValidation
+
+## **9.5 Enrollment Management Module**
+
+### **Purpose**
+
+Responsible for managing student enrollments in courses.
+
+### **Responsibilities**
+
+- Enroll students.
+- Prevent duplicate enrollments.
+- Retrieve enrolled courses.
+- Retrieve enrolled students.
+
+### **Main Components**
+
+| **Component** | **Responsibility** |
+| --- | --- |
+| Enroll Student Feature | Enrolls a student in a course. |
+| Get My Courses Feature | Retrieves enrolled courses. |
+| Get Enrolled Students Feature | Retrieves students enrolled in a course. |
+
+### **Related Vertical Slices**
+
+```csharp
+Enrollments
+├── EnrollStudent
+├── GetMyCourses
+└── GetEnrolledStudents
+```
+
+### **Dependencies**
+
+- Enrollment Entity
+- Course Entity
+- User Entity
+- FluentValidation
+
+## **9.6 Assignment Management Module**
+
+### **Purpose**
+
+Responsible for managing assignments, student submissions, grading, and feedback.
+
+### **Responsibilities**
+
+- Create assignments.
+- Update assignments.
+- Delete assignments.
+- Submit assignments.
+- Review submissions.
+- Grade submissions.
+- View grades and feedback.
+
+### **Main Components**
+
+| **Component** | **Responsibility** |
+| --- | --- |
+| Create Assignment Feature | Creates assignments. |
+| Update Assignment Feature | Updates assignment details. |
+| Delete Assignment Feature | Deletes assignments. |
+| Submit Assignment Feature | Handles student submissions. |
+| Grade Submission Feature | Grades submitted assignments. |
+| View Grades Feature | Retrieves grades and feedback. |
+
+### **Related Vertical Slices**
+
+```csharp
+Assignments
+├── CreateAssignment
+├── UpdateAssignment
+├── DeleteAssignment
+├── SubmitAssignment
+├── GetSubmissions
+└── GradeSubmission
+```
+
+### **Dependencies**
+
+- Assignment Entity
+- Submission Entity
+- Course Entity
+- User Entity
+- FluentValidation
+
+# **10- Domain Model**
+
+### **Overview**
+
+The Domain Model represents the core business entities of the Zakerly Learning Management System. These entities encapsulate the primary business concepts and relationships that define the application’s domain. Each entity is responsible for representing a specific part of the system while enforcing the corresponding business rules within the Domain layer.
+
+| **Entity** | **Responsibility** |
+| --- | --- |
+| User | Represents system users. |
+| Course | Represents learning courses. |
+| Lesson | Represents course lessons. |
+| Enrollment | Represents course registrations. |
+| Assignment | Represents course assignments. |
+| Submission | Represents student assignment submissions. |
+| Resource | Represents lesson learning materials. |
+
+# **11- Database Design**
+
+### **Database Overview**
+
+Zakerly uses PostgreSQL as the primary relational database management system. The database is designed following normalization principles to reduce redundancy while maintaining efficient query performance. Entity Framework Core is used as the Object-Relational Mapper (ORM) to manage database operations and schema migrations.
+
+### **Database Principles**
+
+| **Principle** | **Description** |
+| --- | --- |
+| Relational Database | PostgreSQL stores all persistent data. |
+| Primary Keys | Every table uses a UUID as its primary key. |
+| Foreign Keys | Relationships are enforced using foreign key constraints. |
+| Normalization | Tables are normalized to reduce redundancy. |
+| Audit Fields | Common audit fields are stored for tracking changes. |
+
+### **Common Audit Fields**
+
+| **Field** | **Description** |
+| --- | --- |
+| Id | Unique identifier (UUID) |
+| CreatedAt | Record creation timestamp |
+| UpdatedAt | Last modification timestamp |
+
+### **Database Entities**
+
+| **Entity** | **Description** |
+| --- | --- |
+| User | Stores user accounts. |
+| Course | Stores course information. |
+| Lesson | Stores course lessons. |
+| Enrollment | Stores student enrollments. |
+| Assignment | Stores assignments. |
+| Submission | Stores student submissions. |
+| Resource | Stores Student Materials |
+
+# **12- Entity Relationships**
+
+### **Overview**
+
+The detailed Entity Relationship Diagram (ERD) is maintained as a separate design document. The following table summarizes the main relationships between the core entities.
+
+| **Parent Entity** | **Child Entity** | **Relationship** |
+| --- | --- | --- |
+| User | Course | One-to-Many (Instructor) |
+| Course | Lesson | One-to-Many |
+| User | Enrollment | One-to-Many |
+| Course | Enrollment | One-to-Many |
+| Course | Assignment | One-to-Many |
+| Assignment | Submission | One-to-Many |
+| User | Submission | One-to-Many |
+| Lesson | Resource | One-to-Many |
+
+# **13- Security Design**
+
+### **Overview**
+
+Security is a fundamental aspect of Zakerly. The system implements authentication, authorization, secure password storage, input validation, and encrypted communication to protect user accounts and application data. Security mechanisms are integrated throughout the application following ASP.NET Core security best practices.
+
+### **Security Mechanisms**
+
+| **Mechanism** | **Description** |
+| --- | --- |
+| JWT Bearer Authentication | Authenticates API requests using JSON Web Tokens. |
+| Role-Based Authorization | Restricts access to endpoints based on user roles (Administrator, Instructor, Student). |
+| Password Hashing | User passwords are securely hashed using BCrypt before storage. |
+| HTTPS | All communication between clients and the server is encrypted using HTTPS. |
+| Input Validation | Incoming requests are validated using FluentValidation to prevent invalid or malicious data. |
+| Authorization Policies | Protected resources are accessible only to authenticated users with the required permissions. |
+
+### **Authentication Flow**
+
+```
+Client Login
+
+↓
+
+Credentials Validation
+
+↓
+
+Password Verification (BCrypt)
+
+↓
+
+JWT Token Generation
+
+↓
+
+Client Stores Token
+
+↓
+
+Token Sent with Each Protected Request
+
+↓
+
+JWT Validation Middleware
+
+↓
+
+Authorized Request
+```
+
+### **User Roles**
+
+| **Role** | **Permissions** |
+| --- | --- |
+| **Administrator** | Full access to all system resources and management operations. |
+| **Instructor** | Manages courses, lessons, assignments, and student submissions. |
+| **Student** | Enrolls in courses, accesses learning materials, submits assignments, and views grades. |
+
+### **Security Best Practices**
+
+- Passwords are never stored in plain text.
+- Protected endpoints require a valid JWT access token.
+- Authorization is enforced through role-based access control.
+- All request data is validated before executing business logic.
+- Sensitive application secrets are stored in configuration files or environment variables.
+- HTTPS secures communication between clients and the server.
+
+# **14- API Design**
+
+## **Overview**
+
+Zakerly exposes RESTful APIs that allow clients to interact with the system through standard HTTP methods. Each feature is implemented as an independent Vertical Slice and exposed through dedicated endpoints. All protected endpoints require JWT Bearer Authentication.
+
+### **API Conventions**
+
+| **Convention** | **Description** |
+| --- | --- |
+| Base URL | `/api/v1` |
+| Request Format | JSON |
+| Response Format | JSON |
+| Authentication | JWT Bearer Token |
+| Content Type | `application/json` |
+| Error Format | Standardized Error Response |
+
+### **Authentication Endpoints**
+
+| **Method** | **Endpoint** | **Description** |
+| --- | --- | --- |
+| POST | `/api/v1/auth/register` | Register a new user |
+| POST | `/api/v1/auth/login` | Authenticate user |
+
+### **User Endpoints**
+
+| **Method** | **Endpoint** | **Description** |
+| --- | --- | --- |
+| GET | `/api/v1/users/profile` | Get current user profile |
+| PUT | `/api/v1/users/profile` | Update profile |
+| PUT | `/api/v1/users/change-password` | Change password |
+
+### **Course Endpoints**
+
+| **Method** | **Endpoint** | **Description** |
+| --- | --- | --- |
+| GET | `/api/v1/courses` | Get all published courses |
+| GET | `/api/v1/courses/{id}` | Get course details |
+| POST | `/api/v1/courses` | Create course |
+| PUT | `/api/v1/courses/{id}` | Update course |
+| DELETE | `/api/v1/courses/{id}` | Delete course |
+| GET | `/api/v1/courses?search=` | Search course |
+| PUT | `/api/v1/courses/{id}/publish` | **Publish Course** |
+
+### **Lesson Endpoints**
+
+| **Method** | **Endpoint** | **Description** |
+| --- | --- | --- |
+| GET | `/api/v1/courses/{courseId}/lessons` | Get course lessons |
+| GET | `/api/v1/lessons/{id}` | Get lesson details |
+| POST | `/api/v1/courses/{courseId}/lessons` | Create lesson |
+| PUT | `/api/v1/lessons/{id}` | Update lesson |
+| DELETE | `/api/v1/lessons/{id}` | Delete lesson |
+| POST | `/api/v1/lessons/{id}/resources` | Upload lesson resource |
+| GET | `/api/v1/lessons/{id}/resources` | **Get Lesson Resource** |
+
+### **Enrollment Endpoints**
+
+| **Method** | **Endpoint** | **Description** |
+| --- | --- | --- |
+| POST | `/api/v1/courses/{courseId}/enroll` | Enroll in a course |
+| GET | `/api/v1/users/me/courses` | Get enrolled courses |
+| GET | `/api/v1/courses/{courseId}/students` | Get enrolled students |
+
+### **Assignment Endpoints**
+
+| **Method** | **Endpoint** | **Description** |
+| --- | --- | --- |
+| GET | `/api/v1/courses/{courseId}/assignments` | Get course assignments |
+| GET | `/api/v1/assignments/{id}` | Get assignment details |
+| POST | `/api/v1/courses/{courseId}/assignments` | Create assignment |
+| PUT | `/api/v1/assignments/{id}` | Update assignment |
+| DELETE | `/api/v1/assignments/{id}` | Delete assignment |
+
+### **Submission Endpoints**
+
+| **Method** | **Endpoint** | **Description** |
+| --- | --- | --- |
+| POST | `/api/v1/assignments/{id}/submit` | Submit assignment |
+| GET | `/api/v1/assignments/{id}/submissions` | Get assignment submissions |
+| GET | `/api/v1/submissions/{id}` | Get submission details |
+| PUT | `/api/v1/submissions/{id}/grade` | Grade submission |
+| GET | `/api/v1/users/me/grades` | View grades and feedback |
+
+### **Administration Endpoints**
+
+| **Method** | **Endpoint** | **Description** |
+| --- | --- | --- |
+| GET | `/api/v1/admin/users` | Get all users |
+| DELETE | `/api/v1/admin/users/{id}` | Delete user |
+
+### **Standard HTTP Response Codes**
+
+| **Code** | **Meaning** |
+| --- | --- |
+| 200 OK | Request completed successfully |
+| 201 Created | Resource created successfully |
+| 204 No Content | Resource deleted successfully |
+| 400 Bad Request | Validation failed |
+| 401 Unauthorized | Authentication required |
+| 403 Forbidden | Insufficient permissions |
+| 404 Not Found | Resource not found |
+| 409 Conflict | Business rule conflict (e.g., duplicate enrollment) |
+| 500 Internal Server Error | Unexpected server error |
+
+# **15- Cross-Cutting Concerns**
+
+### **Overview**
+
+Cross-cutting concerns are shared technical capabilities that affect multiple layers and features across the entire application. Instead of being implemented within individual business modules, these concerns are centralized to ensure consistency, maintainability, and reduce code duplication throughout the system.
+
+| **Concern** | **Description** |
+| --- | --- |
+| Logging | Records application events, requests, and unexpected errors for monitoring and troubleshooting. |
+| Validation | Validates incoming requests using FluentValidation before executing business logic. |
+| Exception Handling | Handles unhandled exceptions centrally and returns standardized API error responses. |
+| Authentication | Authenticates API requests using JWT Bearer tokens. |
+| Authorization | Enforces role-based access control to protect secured resources. |
+| Dependency Injection | Manages service dependencies using the ASP.NET Core dependency injection container. |
+
+# **16- Error Handling Strategy**
+
+## **Overview**
+
+The application uses centralized exception handling through a Global Exception Middleware. All unhandled exceptions are translated into standardized API responses to ensure consistency.
+
+### **Standard Error Response**
+
+```json
+{
+"status":400,
+"title":"Validation Failed",
+"errors":[
+"Course title is required."
+]
+}
+```
+
+### **Exception Mapping**
+
+| **Exception** | **HTTP Code** |
+| --- | --- |
+| ValidationException | 400 |
+| UnauthorizedAccessException | 401 |
+| ForbiddenException | 403 |
+| NotFoundException | 404 |
+| ConflictException | 409 |
+| Exception | 500 |
+
+# **17- Deployment Architecture**
+
+### **Overview**
+
+The Zakerly system is deployed using a containerized architecture to simplify development, testing, and production deployment. The ASP.NET Core Web API communicates with a PostgreSQL database over a secure internal network, while clients access the application through HTTPS. Docker is used to ensure a consistent runtime environment across development and deployment stages.
+
+### **Deployment Components**
+
+| **Component** | **Responsibility** |
+| --- | --- |
+| Client | Sends HTTP requests and consumes RESTful APIs. |
+| ASP.NET Core API | Hosts the application and processes business requests. |
+| PostgreSQL | Stores all persistent application data. |
+| Docker | Provides a consistent containerized runtime environment. |
+
+### **Deployment Flow**
+
+```
+Client
+
+↓
+
+HTTPS
+
+↓
+
+ASP.NET Core API (Docker Container)
+
+↓
+
+Entity Framework Core
+
+↓
+
+PostgreSQL (Docker Container)
+```
+
+# **18- Non-Functional Requirements**
+
+### **Overview**
+
+In addition to the functional requirements, Zakerly is designed to satisfy several non-functional requirements that ensure the system remains reliable, maintainable, secure, and scalable throughout its lifecycle.
+
+### **Requirements**
+
+| **Requirement** | **Description** |
+| --- | --- |
+| Performance | API requests should be processed efficiently with optimized database queries. |
+| Scalability | The architecture supports future feature expansion and increased user load. |
+| Maintainability | Clean Architecture and Vertical Slice Architecture simplify maintenance and future enhancements. |
+| Security | JWT authentication, role-based authorization, HTTPS, and password hashing protect application data. |
+| Reliability | Database transactions and validation help maintain data consistency. |
+| Availability | The system is designed to remain operational with minimal downtime. |
+| Extensibility | New features can be added without affecting existing modules. |
+| Testability | The separation of concerns enables easier unit and integration testing. |
+
+# **19- Future Enhancements**
+
+### **Overview**
+
+The current version of Zakerly focuses on the core functionalities required for a Learning Management System. The modular architecture allows additional features to be integrated in future releases with minimal impact on the existing codebase.
+
+### **Planned Enhancements**
+
+| **Feature** | **Description** |
+| --- | --- |
+| Refresh Tokens | Improve authentication security by supporting long-lived sessions. |
+| Email Verification | Verify user email addresses during registration. |
+| Password Reset | Allow users to securely reset forgotten passwords. |
+| Course Reviews | Enable students to rate and review courses. |
+| Discussion Forum | Provide communication between instructors and students. |
+| Notifications | Send real-time or email notifications for important events. |
+| Quizzes and Exams | Support online quizzes and automated assessments. |
+| Certificates | Generate certificates after successful course completion. |
+| Video Streaming | Support embedded video lectures and streaming. |
+| Redis Caching | Improve performance by caching frequently accessed data. |
+| SignalR | Deliver real-time notifications and live updates. |
+
+Resource
+
+Resource
+
+| Lesson | Resource | One-to-Many |
+| --- | --- | --- |
+
+POST /lessons/{id}/resources
