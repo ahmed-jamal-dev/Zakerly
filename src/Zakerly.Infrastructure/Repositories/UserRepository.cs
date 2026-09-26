@@ -18,17 +18,21 @@ public class UserRepository : IUserRepository
         string email,
         CancellationToken cancellationToken)
     {
-        return await _context.Users.AnyAsync(
-            user => user.Email == email,
-            cancellationToken);
+        return await _context.Users
+            .AsNoTracking()
+            .AnyAsync(
+                user => user.Email == email,
+                cancellationToken);
     }
     public async Task<User?> GetByEmailAsync(
         string email,
         CancellationToken cancellationToken)
     {
-        return await _context.Users.FirstOrDefaultAsync(
-            user => user.Email == email,
-            cancellationToken);
+        return await _context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                user => user.Email == email,
+                cancellationToken);
     }
     public async Task AddAsync(
         User user,

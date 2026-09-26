@@ -2,11 +2,9 @@ namespace Zakerly.Domain.Entities;
 
 public class Enrollment : BaseEntity
 {
-
     public Guid StudentId { get; private set; }
 
     public Guid CourseId { get; private set; }
-
 
 
     // Navigation Properties

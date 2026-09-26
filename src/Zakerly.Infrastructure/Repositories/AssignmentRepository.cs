@@ -32,6 +32,7 @@ public class AssignmentRepository : IAssignmentRepository
         CancellationToken cancellationToken)
     {
         return await _context.Assignments
+            .AsNoTracking()
             .Where(x => x.CourseId == courseId)
             .OrderBy(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
@@ -42,6 +43,7 @@ public class AssignmentRepository : IAssignmentRepository
         CancellationToken cancellationToken)
     {
         return await _context.Assignments
+            .AsNoTracking()
             .FirstOrDefaultAsync(
                 x => x.Id == assignmentId,
                 cancellationToken);

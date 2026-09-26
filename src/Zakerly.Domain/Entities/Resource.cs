@@ -2,7 +2,7 @@ namespace Zakerly.Domain.Entities;
 
 public class Resource: BaseEntity
 {
-
+    
     public string Name { get; private set; } = string.Empty;
 
     public string FilePath { get; private set; } = string.Empty;

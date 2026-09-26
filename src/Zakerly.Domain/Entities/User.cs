@@ -1,9 +1,9 @@
+namespace Zakerly.Domain.Entities;
 using Zakerly.Domain.Enums;
 
-namespace Zakerly.Domain.Entities;
 public class User : BaseEntity
 {
-    public string FullName { get; private set; } = string.Empty;
+        public string FullName { get; private set; } = string.Empty;
 
     public string Email { get; private set; } = string.Empty;
 
@@ -18,7 +18,6 @@ public class User : BaseEntity
     public ICollection<Submission> Submissions { get; private set; } = [];
     private User()
     {
-        
     }
 
     public User(string fullName, string email, string passwordHash, UserRole role)

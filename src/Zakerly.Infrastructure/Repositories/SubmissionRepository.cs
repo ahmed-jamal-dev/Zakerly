@@ -32,6 +32,7 @@ public class SubmissionRepository : ISubmissionRepository
         CancellationToken cancellationToken)
     {
         return await _context.Submissions
+            .AsNoTracking()
             .Include(x => x.Student)
             .Include(x => x.Assignment)
             .Where(x => x.AssignmentId == assignmentId)
@@ -44,6 +45,7 @@ public class SubmissionRepository : ISubmissionRepository
         CancellationToken cancellationToken)
     {
         return await _context.Submissions
+            .AsNoTracking()
             .Include(x => x.Assignment)
             .Where(x => x.StudentId == studentId)
             .OrderByDescending(x => x.CreatedAt)
@@ -55,6 +57,7 @@ public class SubmissionRepository : ISubmissionRepository
         CancellationToken cancellationToken)
     {
         return await _context.Submissions
+            .AsNoTracking()
             .Include(x => x.Student)
             .Include(x => x.Assignment)
             .FirstOrDefaultAsync(
@@ -67,10 +70,12 @@ public class SubmissionRepository : ISubmissionRepository
         Guid studentId,
         CancellationToken cancellationToken)
     {
-        return await _context.Submissions.AnyAsync(
-            x => x.AssignmentId == assignmentId &&
-                 x.StudentId == studentId,
-            cancellationToken);
+        return await _context.Submissions
+            .AsNoTracking()
+            .AnyAsync(
+                x => x.AssignmentId == assignmentId &&
+                     x.StudentId == studentId,
+                cancellationToken);
     }
 
     public async Task UpdateAsync(

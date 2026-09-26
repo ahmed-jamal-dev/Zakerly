@@ -30,6 +30,7 @@ public class ResourceRepository : IResourceRepository
         CancellationToken cancellationToken)
     {
         return await _context.Resources
+            .AsNoTracking()
             .Where(x => x.LessonId == lessonId)
             .OrderBy(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
@@ -40,6 +41,7 @@ public class ResourceRepository : IResourceRepository
         CancellationToken cancellationToken)
     {
         return await _context.Resources
+            .AsNoTracking()
             .FirstOrDefaultAsync(
                 x => x.Id == resourceId,
                 cancellationToken);

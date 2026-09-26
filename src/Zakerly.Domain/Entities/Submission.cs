@@ -2,7 +2,7 @@ namespace Zakerly.Domain.Entities;
 
 public class Submission : BaseEntity
 {
-
+    
     public string FilePath { get; private set; } = string.Empty;
 
     public decimal? Grade { get; private set; }
@@ -45,7 +45,7 @@ public class Submission : BaseEntity
         Grade = grade;
         Feedback = feedback;
         UpdatedAt = DateTime.UtcNow;
-        
+
     }
     
 }

@@ -14,7 +14,7 @@ public class ExceptionHandlingMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, CancellationToken cancellationToken = default)
     {
         try
         {

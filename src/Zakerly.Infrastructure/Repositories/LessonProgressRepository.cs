@@ -33,6 +33,7 @@ public class LessonProgressRepository : ILessonProgressRepository
         CancellationToken cancellationToken)
     {
         return await _context.LessonProgresses
+            .AsNoTracking()
             .FirstOrDefaultAsync(
                 x => x.StudentId == studentId &&
                      x.LessonId == lessonId,
@@ -44,6 +45,7 @@ public class LessonProgressRepository : ILessonProgressRepository
         CancellationToken cancellationToken)
     {
         return await _context.LessonProgresses
+            .AsNoTracking()
             .Include(x => x.Lesson)
             .Where(x => x.StudentId == studentId)
             .OrderBy(x => x.CreatedAt)
@@ -56,6 +58,7 @@ public class LessonProgressRepository : ILessonProgressRepository
         CancellationToken cancellationToken)
     {
         return await _context.LessonProgresses
+            .AsNoTracking()
             .Include(x => x.Lesson)
             .Where(x =>
                 x.StudentId == studentId &&

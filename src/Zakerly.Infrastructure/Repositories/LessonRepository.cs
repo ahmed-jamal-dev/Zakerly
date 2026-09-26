@@ -33,6 +33,7 @@ public class LessonRepository : ILessonRepository
         return await _context.Lessons
             .Where(x => x.CourseId == courseId)
             .OrderBy(x => x.CreatedAt)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
     public async Task<Lesson?> GetByIdAsync(
@@ -40,6 +41,7 @@ public class LessonRepository : ILessonRepository
         CancellationToken cancellationToken)
     {
         return await _context.Lessons
+            .AsNoTracking()
             .FirstOrDefaultAsync(
                 x => x.Id == lessonId,
                 cancellationToken);

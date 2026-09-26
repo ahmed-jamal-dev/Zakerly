@@ -2,7 +2,7 @@ namespace Zakerly.Domain.Entities;
 
 public class LessonProgress : BaseEntity
 {
-    public Guid StudentId { get; private set; }
+        public Guid StudentId { get; private set; }
 
     public Guid LessonId { get; private set; }
 

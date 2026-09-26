@@ -2,7 +2,6 @@ using Zakerly.Domain.Enums;
 namespace Zakerly.Domain.Entities;
 public class Course : BaseEntity
 {
-
     public string Title { get; private set; } = string.Empty;
 
     public string Description { get; private set; } = string.Empty;
@@ -22,9 +21,7 @@ public class Course : BaseEntity
     public ICollection<Enrollment> Enrollments { get; private set; } = [];
 
     private Course()
-
     {
-
     }
 
     public Course(
@@ -44,7 +41,6 @@ public class Course : BaseEntity
         InstructorId = instructorId;
 
         IsPublished = false;
-
         CreatedAt = DateTime.UtcNow;
 
     }

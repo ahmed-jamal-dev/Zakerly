@@ -24,6 +24,7 @@ public class CourseRepository : ICourseRepository
         CancellationToken cancellationToken)
     {
         return await _context.Courses
+            .AsNoTracking()
             .Include(c => c.Instructor)
             .ToListAsync(cancellationToken);
     }
@@ -31,9 +32,10 @@ public class CourseRepository : ICourseRepository
     public async Task<Course?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _context.Courses
+            .AsNoTracking()
             .Include(c => c.Instructor)
             .FirstOrDefaultAsync(
-                c => 
+                c =>
                 c.Id == id,
                 cancellationToken);
     }

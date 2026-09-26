@@ -2,7 +2,7 @@ namespace Zakerly.Domain.Entities;
 
 public class Lesson : BaseEntity
 {
-
+    
     public string Title { get; private set; } = string.Empty;
 
     public string Content { get; private set; } = string.Empty;

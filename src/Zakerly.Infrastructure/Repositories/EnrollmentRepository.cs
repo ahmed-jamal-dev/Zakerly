@@ -32,17 +32,21 @@ public class EnrollmentRepository : IEnrollmentRepository
         Guid courseId,
         CancellationToken cancellationToken)
     {
-        return await _context.Enrollments.AnyAsync(
-            x => x.StudentId == studentId &&
-                 x.CourseId == courseId,
-            cancellationToken);
+        return await _context.Enrollments
+            .AsNoTracking()
+            .AnyAsync(
+                x => x.StudentId == studentId &&
+                     x.CourseId == courseId,
+                cancellationToken);
     }
 
     public async Task<List<Enrollment>> GetByStudentIdAsync(
         Guid studentId,
         CancellationToken cancellationToken)
     {
-        return await _context.Enrollments.Include(x => x.Course)
+        return await _context.Enrollments
+            .AsNoTracking()
+            .Include(x => x.Course)
             .Where(x => x.StudentId == studentId)
             .OrderBy(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
@@ -53,17 +57,20 @@ public class EnrollmentRepository : IEnrollmentRepository
         CancellationToken cancellationToken)
     {
         return await _context.Enrollments
+            .AsNoTracking()
             .Include(x => x.Student)
             .Include(x => x.Course)
             .Where(x => x.CourseId == courseId)
             .OrderBy(x => x.CreatedAt)
-            .ToListAsync(cancellationToken);    }
+            .ToListAsync(cancellationToken);
+    }
 
     public async Task<Enrollment?> GetByIdAsync(
         Guid enrollmentId,
         CancellationToken cancellationToken)
     {
         return await _context.Enrollments
+            .AsNoTracking()
             .FirstOrDefaultAsync(
                 x => x.Id == enrollmentId,
                 cancellationToken);
