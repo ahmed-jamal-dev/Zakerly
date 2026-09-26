@@ -17,4 +17,7 @@ obj/
 
 #Docs
 .md
-/docs
+/docs/
+CLAUDE.md
+AGENT.md
+
