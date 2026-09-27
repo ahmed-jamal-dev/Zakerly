@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Zakerly.Application.Features.Authentication.Login;
 using Zakerly.Application.Features.Authentication.Register;
+using Zakerly.Application.Features.Users.UpdateProfile;
 
 namespace Zakerly.API.Controllers;
 
@@ -61,5 +62,19 @@ public class AuthController : ControllerBase
             Email = email,
             Role = role
         });
+    }
+
+    // PUT: api/auth/profile
+    [Authorize]
+    [HttpPut("profile")]
+    public async Task<IActionResult> UpdateProfile(
+        [FromBody] UpdateProfileCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            command,
+            cancellationToken);
+
+        return Ok(result);
     }
 }

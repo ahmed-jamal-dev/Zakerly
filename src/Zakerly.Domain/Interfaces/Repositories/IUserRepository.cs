@@ -8,11 +8,19 @@ public interface IUserRepository
         string email,
         CancellationToken cancellationToken);
 
+    Task<User?> GetByEmailAsync(
+        string email,
+        CancellationToken cancellationToken);
+
+    Task<User?> GetByIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken);
+
     Task AddAsync(
         User user,
         CancellationToken cancellationToken);
 
-    Task<User?> GetByEmailAsync(
-        string email,
+    Task UpdateAsync(
+        User user,
         CancellationToken cancellationToken);
 }
