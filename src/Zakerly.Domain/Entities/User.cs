@@ -28,4 +28,11 @@ public class User : BaseEntity
         Role = role;
         CreatedAt = DateTime.UtcNow;
     }
+
+    public void UpdateProfile(string fullName, string email)
+    {
+        FullName = fullName;
+        Email = email;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
