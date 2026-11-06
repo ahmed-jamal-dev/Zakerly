@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Zakerly.Application.Common.Pagination;
 using Zakerly.Application.Features.Enrollments.EnrollCourse;
 using Zakerly.Application.Features.Enrollments.GetCourseStudents;
 namespace Zakerly.API.Controllers;
@@ -32,16 +33,17 @@ public class CourseEnrollmentsController : ControllerBase
             $"/api/v1/enrollments/{response.EnrollmentId}",
             response);
     }
-    
+
     // GET: api/v1/courses/{courseId}/enrollments
     [Authorize(Roles = "Instructor")]
     [HttpGet]
     public async Task<IActionResult> GetCourseStudents(
         Guid courseId,
+        [FromQuery] PaginationParams pagination,
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(
-            new GetCourseStudentsQuery(courseId),
+            new GetCourseStudentsQuery(courseId, pagination),
             cancellationToken);
 
         return Ok(result);

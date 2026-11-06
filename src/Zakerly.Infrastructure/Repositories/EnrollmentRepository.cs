@@ -76,6 +76,61 @@ public class EnrollmentRepository : IEnrollmentRepository
                 cancellationToken);
     }
 
+    public async Task<long> CountByStudentIdAsync(Guid studentId, CancellationToken cancellationToken)
+    {
+        return await _context.Enrollments
+            .AsNoTracking()
+            .Where(e => e.StudentId == studentId)
+            .LongCountAsync(cancellationToken);
+    }
+
+    public async Task<List<Enrollment>> GetByStudentIdPagedAsync(Guid studentId, long skip, int take, CancellationToken cancellationToken)
+    {
+        // Handle skip values that exceed int.MaxValue or are negative by returning empty list
+        if (skip < 0 || skip > int.MaxValue)
+        {
+            return [];
+        }
+
+        return await _context.Enrollments
+            .AsNoTracking()
+            .Include(e => e.Course)
+            .Where(e => e.StudentId == studentId)
+            .OrderBy(e => e.CreatedAt)
+            .ThenBy(e => e.Id)
+            .Skip((int)skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<long> CountByCourseIdAsync(Guid courseId, CancellationToken cancellationToken)
+    {
+        return await _context.Enrollments
+            .AsNoTracking()
+            .Where(e => e.CourseId == courseId)
+            .LongCountAsync(cancellationToken);
+    }
+
+    public async Task<List<Enrollment>> GetByCourseIdPagedAsync(Guid courseId, long skip, int take, CancellationToken cancellationToken)
+    {
+        // Handle skip values that exceed int.MaxValue or are negative by returning empty list
+        if (skip < 0 || skip > int.MaxValue)
+        {
+            return [];
+        }
+
+        return await _context.Enrollments
+            .AsNoTracking()
+            .Include(e => e.Student)
+            .Include(e => e.Course)
+            .Where(e => e.CourseId == courseId)
+            .OrderBy(e => e.CreatedAt)
+            .ThenBy(e => e.Id)
+            .Skip((int)skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task DeleteAsync(
         Enrollment enrollment,
         CancellationToken cancellationToken)

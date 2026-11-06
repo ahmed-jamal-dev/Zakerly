@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Zakerly.Application.Common.Pagination;
 using Zakerly.Application.Features.Courses.ArchiveCourse;
 using Zakerly.Application.Features.Courses.CreateCourse;
 using Zakerly.Application.Features.Courses.DeleteCourse;
@@ -25,10 +26,11 @@ public class CoursesController : ControllerBase
     // GET: api/v1/courses
     [HttpGet]
     public async Task<IActionResult> GetAll(
+        [FromQuery] PaginationParams pagination,
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(
-            new GetAllCoursesQuery(),
+            new GetAllCoursesQuery(pagination),
             cancellationToken);
 
         return Ok(result);

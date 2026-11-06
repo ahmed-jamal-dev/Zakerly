@@ -58,6 +58,33 @@ public class LessonRepository : ILessonRepository
                 x => x.Id == lessonId,
                 cancellationToken);
     }
+
+    public async Task<long> CountByCourseIdAsync(Guid courseId, CancellationToken cancellationToken)
+    {
+        return await _context.Lessons
+            .AsNoTracking()
+            .Where(l => l.CourseId == courseId)
+            .LongCountAsync(cancellationToken);
+    }
+
+    public async Task<List<Lesson>> GetByCourseIdPagedAsync(Guid courseId, long skip, int take, CancellationToken cancellationToken)
+    {
+        // Handle skip values that exceed int.MaxValue or are negative by returning empty list
+        if (skip < 0 || skip > int.MaxValue)
+        {
+            return [];
+        }
+
+        return await _context.Lessons
+            .AsNoTracking()
+            .Where(l => l.CourseId == courseId)
+            .OrderBy(l => l.CreatedAt)
+            .ThenBy(l => l.Id)
+            .Skip((int)skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task UpdateAsync(
         Lesson lesson,
         CancellationToken cancellationToken)

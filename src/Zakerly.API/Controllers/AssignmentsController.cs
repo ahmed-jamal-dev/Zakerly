@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Assignments;
+using Zakerly.Application.Common.Pagination;
 using Zakerly.Application.Features.Assignments.CreateAssignment;
 using Zakerly.Application.Features.Assignments.DeleteAssignment;
 using Zakerly.Application.Features.Assignments.GetAllAssignments;
@@ -24,10 +25,11 @@ public class AssignmentsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll(
         Guid courseId,
+        [FromQuery] PaginationParams pagination,
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(
-            new GetAllAssignmentsQuery(courseId),
+            new GetAllAssignmentsQuery(courseId, pagination),
             cancellationToken);
 
         return Ok(result);

@@ -25,4 +25,6 @@ public interface ILessonRepository
         Lesson lesson,
         CancellationToken cancellationToken);
 
+    Task<long> CountByCourseIdAsync(Guid courseId, CancellationToken cancellationToken);
+    Task<List<Lesson>> GetByCourseIdPagedAsync(Guid courseId, long skip, int take, CancellationToken cancellationToken);
 }

@@ -1,12 +1,13 @@
 using MediatR;
 using Zakerly.Application.Common.Exceptions;
 using Zakerly.Application.Common.Interfaces;
+using Zakerly.Application.Common.Pagination;
 using Zakerly.Domain.Interfaces.Repositories;
 
 namespace Zakerly.Application.Features.Resources.GetAllResources;
 
 public class GetAllResourcesQueryHandler
-    : IRequestHandler<GetAllResourcesQuery, List<GetAllResourcesResponse>>
+    : IRequestHandler<GetAllResourcesQuery, PagedResponse<GetAllResourcesResponse>>
 {
     private readonly IResourceRepository _resourceRepository;
     private readonly ILessonRepository _lessonRepository;
@@ -25,10 +26,12 @@ public class GetAllResourcesQueryHandler
         _currentUserService = currentUserService;
     }
 
-    public async Task<List<GetAllResourcesResponse>> Handle(
+    public async Task<PagedResponse<GetAllResourcesResponse>> Handle(
         GetAllResourcesQuery request,
         CancellationToken cancellationToken)
     {
+        var pagination = request.Pagination ?? new PaginationParams();
+
         var lesson = await _lessonRepository.GetByIdWithCourseAsync(
             request.LessonId,
             cancellationToken);
@@ -54,15 +57,25 @@ public class GetAllResourcesQueryHandler
                     request.LessonId);
         }
 
-        var resources = await _resourceRepository.GetAllByLessonIdAsync(
+        var totalItems = await _resourceRepository.CountByLessonIdAsync(
             request.LessonId,
             cancellationToken);
 
-        return resources
+        var resources = await _resourceRepository.GetByLessonIdPagedAsync(
+            request.LessonId,
+            pagination.Skip,
+            pagination.Take,
+            cancellationToken);
+
+        var items = resources
             .Select(x => new GetAllResourcesResponse(
                 x.Id,
                 x.Name,
                 x.FilePath))
             .ToList();
+
+        var metadata = pagination.CreateMetadata(totalItems);
+
+        return new PagedResponse<GetAllResourcesResponse>(items, metadata);
     }
 }

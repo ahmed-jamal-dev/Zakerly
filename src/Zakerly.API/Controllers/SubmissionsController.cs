@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Submissions;
+using Zakerly.Application.Common.Pagination;
 using Zakerly.Application.Features.Submissions.GetMySubmissions;
 using Zakerly.Application.Features.Submissions.SubmitAssignment;
 using Zakerly.Application.Features.Submissions.GetAssignmentSubmissions;
@@ -45,10 +46,11 @@ public class SubmissionsController : ControllerBase
     [Authorize(Roles = "Student")]
     [HttpGet("/api/v1/submissions/my")]
     public async Task<IActionResult> GetMySubmissions(
+        [FromQuery] PaginationParams pagination,
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(
-            new GetMySubmissionsQuery(),
+            new GetMySubmissionsQuery(pagination),
             cancellationToken);
 
         return Ok(result);
@@ -58,10 +60,11 @@ public class SubmissionsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAssignmentSubmissions(
         Guid assignmentId,
+        [FromQuery] PaginationParams pagination,
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(
-            new GetAssignmentSubmissionsQuery(assignmentId),
+            new GetAssignmentSubmissionsQuery(assignmentId, pagination),
             cancellationToken);
 
         return Ok(result);

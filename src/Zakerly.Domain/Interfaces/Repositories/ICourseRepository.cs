@@ -9,4 +9,7 @@ public interface ICourseRepository
     Task<Course?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task UpdateAsync(Course course, CancellationToken cancellationToken);
     Task DeleteAsync(Course course, CancellationToken cancellationToken);
+
+    Task<long> CountPublishedNonArchivedAsync(CancellationToken cancellationToken);
+    Task<List<Course>> GetPublishedNonArchivedPagedAsync(long skip, int take, CancellationToken cancellationToken);
 }

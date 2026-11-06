@@ -61,6 +61,32 @@ public class AssignmentRepository : IAssignmentRepository
                 cancellationToken);
     }
 
+    public async Task<long> CountByCourseIdAsync(Guid courseId, CancellationToken cancellationToken)
+    {
+        return await _context.Assignments
+            .AsNoTracking()
+            .Where(a => a.CourseId == courseId)
+            .LongCountAsync(cancellationToken);
+    }
+
+    public async Task<List<Assignment>> GetByCourseIdPagedAsync(Guid courseId, long skip, int take, CancellationToken cancellationToken)
+    {
+        // Handle skip values that exceed int.MaxValue or are negative by returning empty list
+        if (skip < 0 || skip > int.MaxValue)
+        {
+            return [];
+        }
+
+        return await _context.Assignments
+            .AsNoTracking()
+            .Where(a => a.CourseId == courseId)
+            .OrderBy(a => a.CreatedAt)
+            .ThenBy(a => a.Id)
+            .Skip((int)skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task UpdateAsync(
         Assignment assignment,
         CancellationToken cancellationToken)

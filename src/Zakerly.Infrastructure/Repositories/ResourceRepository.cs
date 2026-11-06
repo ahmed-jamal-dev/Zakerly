@@ -60,6 +60,32 @@ public class ResourceRepository : IResourceRepository
                 cancellationToken);
     }
 
+    public async Task<long> CountByLessonIdAsync(Guid lessonId, CancellationToken cancellationToken)
+    {
+        return await _context.Resources
+            .AsNoTracking()
+            .Where(r => r.LessonId == lessonId)
+            .LongCountAsync(cancellationToken);
+    }
+
+    public async Task<List<Resource>> GetByLessonIdPagedAsync(Guid lessonId, long skip, int take, CancellationToken cancellationToken)
+    {
+        // Handle skip values that exceed int.MaxValue or are negative by returning empty list
+        if (skip < 0 || skip > int.MaxValue)
+        {
+            return [];
+        }
+
+        return await _context.Resources
+            .AsNoTracking()
+            .Where(r => r.LessonId == lessonId)
+            .OrderBy(r => r.CreatedAt)
+            .ThenBy(r => r.Id)
+            .Skip((int)skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task UpdateAsync(
         Resource resource,
         CancellationToken cancellationToken)

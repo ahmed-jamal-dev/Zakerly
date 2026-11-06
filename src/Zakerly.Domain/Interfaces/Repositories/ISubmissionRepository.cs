@@ -31,4 +31,10 @@ public interface ISubmissionRepository
     Task DeleteAsync(
         Submission submission,
         CancellationToken cancellationToken);
+
+    Task<long> CountByStudentIdAsync(Guid studentId, CancellationToken cancellationToken);
+    Task<List<Submission>> GetByStudentIdPagedAsync(Guid studentId, long skip, int take, CancellationToken cancellationToken);
+
+    Task<long> CountByAssignmentIdAsync(Guid assignmentId, CancellationToken cancellationToken);
+    Task<List<Submission>> GetByAssignmentIdPagedAsync(Guid assignmentId, long skip, int take, CancellationToken cancellationToken);
 }

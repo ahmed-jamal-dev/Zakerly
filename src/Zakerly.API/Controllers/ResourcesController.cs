@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Zakerly.API.Contracts.Resources;
+using Zakerly.Application.Common.Pagination;
 using Zakerly.Application.Features.Resources.CreateResource;
 using Zakerly.Application.Features.Resources.DeleteResource;
 using Zakerly.Application.Features.Resources.GetAllResources;
@@ -24,10 +25,11 @@ public class ResourcesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll(
         Guid lessonId,
+        [FromQuery] PaginationParams pagination,
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(
-            new GetAllResourcesQuery(lessonId),
+            new GetAllResourcesQuery(lessonId, pagination),
             cancellationToken);
 
         return Ok(result);

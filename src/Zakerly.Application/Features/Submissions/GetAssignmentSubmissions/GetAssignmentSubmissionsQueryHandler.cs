@@ -1,13 +1,14 @@
 using MediatR;
 using Zakerly.Application.Common.Exceptions;
 using Zakerly.Application.Common.Interfaces;
+using Zakerly.Application.Common.Pagination;
 using Zakerly.Domain.Entities;
 using Zakerly.Domain.Interfaces.Repositories;
 
 namespace Zakerly.Application.Features.Submissions.GetAssignmentSubmissions;
 
 public class GetAssignmentSubmissionsQueryHandler
-    : IRequestHandler<GetAssignmentSubmissionsQuery, List<GetAssignmentSubmissionsResponse>>
+    : IRequestHandler<GetAssignmentSubmissionsQuery, PagedResponse<GetAssignmentSubmissionsResponse>>
 {
     private readonly ISubmissionRepository _submissionRepository;
     private readonly IAssignmentRepository _assignmentRepository;
@@ -26,10 +27,12 @@ public class GetAssignmentSubmissionsQueryHandler
         _currentUserService = currentUserService;
     }
 
-    public async Task<List<GetAssignmentSubmissionsResponse>> Handle(
+    public async Task<PagedResponse<GetAssignmentSubmissionsResponse>> Handle(
         GetAssignmentSubmissionsQuery request,
         CancellationToken cancellationToken)
     {
+        var pagination = request.Pagination ?? new PaginationParams();
+
         var assignment = await _assignmentRepository.GetByIdAsync(
             request.AssignmentId,
             cancellationToken);
@@ -52,11 +55,17 @@ public class GetAssignmentSubmissionsQueryHandler
             throw new ForbiddenException(
                 "You are not allowed to view these submissions.");
 
-        var submissions = await _submissionRepository.GetByAssignmentIdAsync(
+        var totalItems = await _submissionRepository.CountByAssignmentIdAsync(
             request.AssignmentId,
             cancellationToken);
 
-        return submissions
+        var submissions = await _submissionRepository.GetByAssignmentIdPagedAsync(
+            request.AssignmentId,
+            pagination.Skip,
+            pagination.Take,
+            cancellationToken);
+
+        var items = submissions
             .Select(x => new GetAssignmentSubmissionsResponse(
                 x.Id,
                 x.StudentId,
@@ -67,5 +76,9 @@ public class GetAssignmentSubmissionsQueryHandler
                 x.Feedback,
                 x.CreatedAt))
             .ToList();
+
+        var metadata = pagination.CreateMetadata(totalItems);
+
+        return new PagedResponse<GetAssignmentSubmissionsResponse>(items, metadata);
     }
 }

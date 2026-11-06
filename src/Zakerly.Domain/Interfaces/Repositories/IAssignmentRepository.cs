@@ -27,4 +27,7 @@ public interface IAssignmentRepository
     Task DeleteAsync(
         Assignment assignment,
         CancellationToken cancellationToken);
+
+    Task<long> CountByCourseIdAsync(Guid courseId, CancellationToken cancellationToken);
+    Task<List<Assignment>> GetByCourseIdPagedAsync(Guid courseId, long skip, int take, CancellationToken cancellationToken);
 }

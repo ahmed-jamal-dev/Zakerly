@@ -1,12 +1,13 @@
 using MediatR;
 using Zakerly.Application.Common.Exceptions;
 using Zakerly.Application.Common.Interfaces;
+using Zakerly.Application.Common.Pagination;
 using Zakerly.Domain.Interfaces.Repositories;
 
 namespace Zakerly.Application.Features.Assignments.GetAllAssignments;
 
 public class GetAllAssignmentsQueryHandler
-    : IRequestHandler<GetAllAssignmentsQuery, List<GetAllAssignmentsResponse>>
+    : IRequestHandler<GetAllAssignmentsQuery, PagedResponse<GetAllAssignmentsResponse>>
 {
     private readonly IAssignmentRepository _assignmentRepository;
     private readonly ICourseRepository _courseRepository;
@@ -25,10 +26,12 @@ public class GetAllAssignmentsQueryHandler
         _currentUserService = currentUserService;
     }
 
-    public async Task<List<GetAllAssignmentsResponse>> Handle(
+    public async Task<PagedResponse<GetAllAssignmentsResponse>> Handle(
         GetAllAssignmentsQuery request,
         CancellationToken cancellationToken)
     {
+        var pagination = request.Pagination ?? new PaginationParams();
+
         var course = await _courseRepository.GetByIdAsync(
             request.CourseId,
             cancellationToken);
@@ -52,15 +55,25 @@ public class GetAllAssignmentsQueryHandler
                     request.CourseId);
         }
 
-        var assignments = await _assignmentRepository.GetAllByCourseIdAsync(
+        var totalItems = await _assignmentRepository.CountByCourseIdAsync(
             request.CourseId,
             cancellationToken);
 
-        return assignments
+        var assignments = await _assignmentRepository.GetByCourseIdPagedAsync(
+            request.CourseId,
+            pagination.Skip,
+            pagination.Take,
+            cancellationToken);
+
+        var items = assignments
             .Select(x => new GetAllAssignmentsResponse(
                 x.Id,
                 x.Title,
                 x.Description))
             .ToList();
+
+        var metadata = pagination.CreateMetadata(totalItems);
+
+        return new PagedResponse<GetAllAssignmentsResponse>(items, metadata);
     }
 }

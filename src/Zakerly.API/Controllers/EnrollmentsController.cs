@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Zakerly.Application.Common.Pagination;
 using Zakerly.Application.Features.Enrollments.GetMyEnrollments;
 using Zakerly.Application.Features.Enrollments.CancelEnrollment;
 namespace Zakerly.API.Controllers;
@@ -20,10 +21,11 @@ public class EnrollmentsController : ControllerBase
     [Authorize(Roles = "Student")]
     [HttpGet("my")]
     public async Task<IActionResult> GetMyEnrollments(
+        [FromQuery] PaginationParams pagination,
         CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(
-            new GetMyEnrollmentsQuery(),
+            new GetMyEnrollmentsQuery(pagination),
             cancellationToken);
 
         return Ok(result);

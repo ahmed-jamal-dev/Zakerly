@@ -51,7 +51,62 @@ public class SubmissionRepository : ISubmissionRepository
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
     }
-    
+
+    public async Task<long> CountByStudentIdAsync(Guid studentId, CancellationToken cancellationToken)
+    {
+        return await _context.Submissions
+            .AsNoTracking()
+            .Where(s => s.StudentId == studentId)
+            .LongCountAsync(cancellationToken);
+    }
+
+    public async Task<List<Submission>> GetByStudentIdPagedAsync(Guid studentId, long skip, int take, CancellationToken cancellationToken)
+    {
+        // Handle skip values that exceed int.MaxValue or are negative by returning empty list
+        if (skip < 0 || skip > int.MaxValue)
+        {
+            return [];
+        }
+
+        return await _context.Submissions
+            .AsNoTracking()
+            .Include(s => s.Assignment)
+            .Where(s => s.StudentId == studentId)
+            .OrderByDescending(s => s.CreatedAt)
+            .ThenByDescending(s => s.Id)
+            .Skip((int)skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<long> CountByAssignmentIdAsync(Guid assignmentId, CancellationToken cancellationToken)
+    {
+        return await _context.Submissions
+            .AsNoTracking()
+            .Where(s => s.AssignmentId == assignmentId)
+            .LongCountAsync(cancellationToken);
+    }
+
+    public async Task<List<Submission>> GetByAssignmentIdPagedAsync(Guid assignmentId, long skip, int take, CancellationToken cancellationToken)
+    {
+        // Handle skip values that exceed int.MaxValue or are negative by returning empty list
+        if (skip < 0 || skip > int.MaxValue)
+        {
+            return [];
+        }
+
+        return await _context.Submissions
+            .AsNoTracking()
+            .Include(s => s.Student)
+            .Include(s => s.Assignment)
+            .Where(s => s.AssignmentId == assignmentId)
+            .OrderBy(s => s.CreatedAt)
+            .ThenBy(s => s.Id)
+            .Skip((int)skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Submission?> GetByIdAsync(
         Guid submissionId,
         CancellationToken cancellationToken)
@@ -91,6 +146,6 @@ public class SubmissionRepository : ISubmissionRepository
         CancellationToken cancellationToken)
     {
         _context.Submissions.Remove(submission);
-        await _context.SaveChangesAsync(cancellationToken); 
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -27,4 +27,7 @@ public interface IResourceRepository
     Task DeleteAsync(
         Resource resource,
         CancellationToken cancellationToken);
+
+    Task<long> CountByLessonIdAsync(Guid lessonId, CancellationToken cancellationToken);
+    Task<List<Resource>> GetByLessonIdPagedAsync(Guid lessonId, long skip, int take, CancellationToken cancellationToken);
 }
