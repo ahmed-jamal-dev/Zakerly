@@ -46,6 +46,18 @@ public class LessonRepository : ILessonRepository
                 x => x.Id == lessonId,
                 cancellationToken);
     }
+
+    public async Task<Lesson?> GetByIdWithCourseAsync(
+        Guid lessonId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Lessons
+            .AsNoTracking()
+            .Include(l => l.Course)
+            .FirstOrDefaultAsync(
+                x => x.Id == lessonId,
+                cancellationToken);
+    }
     public async Task UpdateAsync(
         Lesson lesson,
         CancellationToken cancellationToken)

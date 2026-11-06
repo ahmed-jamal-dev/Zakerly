@@ -49,6 +49,18 @@ public class AssignmentRepository : IAssignmentRepository
                 cancellationToken);
     }
 
+    public async Task<Assignment?> GetByIdWithCourseAsync(
+        Guid assignmentId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Assignments
+            .AsNoTracking()
+            .Include(a => a.Course)
+            .FirstOrDefaultAsync(
+                x => x.Id == assignmentId,
+                cancellationToken);
+    }
+
     public async Task UpdateAsync(
         Assignment assignment,
         CancellationToken cancellationToken)

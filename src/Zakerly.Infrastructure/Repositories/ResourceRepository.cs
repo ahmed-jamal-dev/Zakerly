@@ -47,6 +47,19 @@ public class ResourceRepository : IResourceRepository
                 cancellationToken);
     }
 
+    public async Task<Resource?> GetByIdWithLessonCourseAsync(
+        Guid resourceId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Resources
+            .AsNoTracking()
+            .Include(r => r.Lesson)
+                .ThenInclude(l => l.Course)
+            .FirstOrDefaultAsync(
+                x => x.Id == resourceId,
+                cancellationToken);
+    }
+
     public async Task UpdateAsync(
         Resource resource,
         CancellationToken cancellationToken)

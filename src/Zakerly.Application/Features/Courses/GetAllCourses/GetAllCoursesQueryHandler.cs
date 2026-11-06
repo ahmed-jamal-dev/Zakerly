@@ -21,7 +21,9 @@ public class GetAllCoursesQueryHandler
         var courses = await _courseRepository.GetAllAsync(
             cancellationToken);
 
-        return courses.Select(course =>
+        return courses
+            .Where(c => c.IsPublished && !c.IsArchived)
+            .Select(course =>
                 new GetAllCoursesResponse(
                     course.Id,
                     course.Title,

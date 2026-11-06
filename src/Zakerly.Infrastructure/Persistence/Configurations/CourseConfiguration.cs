@@ -22,6 +22,9 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
         builder.Property(x => x.IsPublished)
             .IsRequired();
 
+        builder.Property(x => x.IsArchived)
+            .IsRequired();
+
         builder.Property(x => x.CreatedAt)
             .IsRequired();
 

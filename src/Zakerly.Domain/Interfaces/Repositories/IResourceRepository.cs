@@ -16,6 +16,10 @@ public interface IResourceRepository
         Guid resourceId,
         CancellationToken cancellationToken);
 
+    Task<Resource?> GetByIdWithLessonCourseAsync(
+        Guid resourceId,
+        CancellationToken cancellationToken);
+
     Task UpdateAsync(
         Resource resource,
         CancellationToken cancellationToken);

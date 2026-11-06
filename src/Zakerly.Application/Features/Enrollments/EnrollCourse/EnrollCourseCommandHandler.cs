@@ -45,6 +45,10 @@ public class EnrollCourseCommandHandler
             throw new ConflictException(
                 "This course is not published yet.");
 
+        if (course.IsArchived)
+            throw new ConflictException(
+                "This course is archived and cannot accept new enrollments.");
+
         var alreadyEnrolled =
             await _enrollmentRepository.ExistsAsync(
                 _currentUserService.UserId,

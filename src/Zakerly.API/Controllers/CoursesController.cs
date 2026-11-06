@@ -1,10 +1,12 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Zakerly.Application.Features.Courses.ArchiveCourse;
 using Zakerly.Application.Features.Courses.CreateCourse;
 using Zakerly.Application.Features.Courses.DeleteCourse;
 using Zakerly.Application.Features.Courses.GetAllCourses;
 using Zakerly.Application.Features.Courses.GetCourseById;
+using Zakerly.Application.Features.Courses.UnarchiveCourse;
 using Zakerly.Application.Features.Courses.UpdateCourse;
 
 namespace Zakerly.API.Controllers;
@@ -89,5 +91,33 @@ public async Task<IActionResult> Delete(
         cancellationToken);
 
     return NoContent();
+}
+
+// PATCH /api/v1/courses/{courseId}/archive
+[Authorize(Roles = "Instructor")]
+[HttpPatch("{id:guid}/archive")]
+public async Task<IActionResult> Archive(
+    Guid id,
+    CancellationToken cancellationToken)
+{
+    var result = await _mediator.Send(
+        new ArchiveCourseCommand(id),
+        cancellationToken);
+
+    return Ok(result);
+}
+
+// PATCH /api/v1/courses/{courseId}/unarchive
+[Authorize(Roles = "Instructor")]
+[HttpPatch("{id:guid}/unarchive")]
+public async Task<IActionResult> Unarchive(
+    Guid id,
+    CancellationToken cancellationToken)
+{
+    var result = await _mediator.Send(
+        new UnarchiveCourseCommand(id),
+        cancellationToken);
+
+    return Ok(result);
 }
 }

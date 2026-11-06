@@ -9,7 +9,9 @@ public class Course : BaseEntity
     public Guid InstructorId { get; private set; }
 
     public bool IsPublished { get; private set; }
-    
+
+    public bool IsArchived { get; private set; }
+
     // Navigation Properties
 
     public User Instructor { get; private set; } = null!;
@@ -41,17 +43,30 @@ public class Course : BaseEntity
         InstructorId = instructorId;
 
         IsPublished = false;
+        IsArchived = false;
         CreatedAt = DateTime.UtcNow;
 
     }
-    
-    
+
+
     public void Update(
         string title,
         string description)
     {
         Title = title;
         Description = description;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void Archive()
+    {
+        IsArchived = true;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void Unarchive()
+    {
+        IsArchived = false;
         UpdatedAt = DateTime.UtcNow;
     }
 }

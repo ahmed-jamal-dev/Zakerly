@@ -69,6 +69,9 @@ namespace Zakerly.Infrastructure.Migrations
                     b.Property<Guid>("InstructorId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsPublished")
                         .HasColumnType("boolean");
 

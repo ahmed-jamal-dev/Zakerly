@@ -4,4 +4,5 @@ public sealed record GetMyEnrollmentsResponse(
     Guid EnrollmentId,
     Guid CourseId,
     string CourseTitle,
-    bool IsPublished);
+    bool IsPublished,
+    bool IsArchived);

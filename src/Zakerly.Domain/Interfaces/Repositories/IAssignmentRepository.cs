@@ -16,6 +16,10 @@ public interface IAssignmentRepository
         Guid assignmentId,
         CancellationToken cancellationToken);
 
+    Task<Assignment?> GetByIdWithCourseAsync(
+        Guid assignmentId,
+        CancellationToken cancellationToken);
+
     Task UpdateAsync(
         Assignment assignment,
         CancellationToken cancellationToken);

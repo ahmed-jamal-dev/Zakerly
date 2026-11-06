@@ -32,7 +32,8 @@ public class GetMyEnrollmentsQueryHandler
                 x.Id,
                 x.CourseId,
                 x.Course.Title,
-                x.Course.IsPublished))
+                x.Course.IsPublished,
+                x.Course.IsArchived))
             .ToList();
     }
 }
