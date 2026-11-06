@@ -51,7 +51,8 @@ public class UpdateAssignmentCommandHandler
 
         assignment.Update(
             request.Title,
-            request.Description);
+            request.Description,
+            request.DueDate);
 
         await _assignmentRepository.UpdateAsync(
             assignment,
@@ -60,6 +61,7 @@ public class UpdateAssignmentCommandHandler
         return new UpdateAssignmentResponse(
             assignment.Id,
             assignment.Title,
-            assignment.Description);
+            assignment.Description,
+            assignment.DueDate);
     }
 }

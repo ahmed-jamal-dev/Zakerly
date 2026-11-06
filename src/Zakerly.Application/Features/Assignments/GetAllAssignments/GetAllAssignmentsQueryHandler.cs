@@ -69,7 +69,8 @@ public class GetAllAssignmentsQueryHandler
             .Select(x => new GetAllAssignmentsResponse(
                 x.Id,
                 x.Title,
-                x.Description))
+                x.Description,
+                x.DueDate))
             .ToList();
 
         var metadata = pagination.CreateMetadata(totalItems);

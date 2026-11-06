@@ -43,7 +43,8 @@ public class CreateAssignmentCommandHandler
         var assignment = new Assignment(
             request.Title,
             request.Description,
-            request.CourseId);
+            request.CourseId,
+            request.DueDate);
 
         await _assignmentRepository.AddAsync(
             assignment,
@@ -52,6 +53,7 @@ public class CreateAssignmentCommandHandler
         return new CreateAssignmentResponse(
             assignment.Id,
             assignment.Title,
-            assignment.Description);
+            assignment.Description,
+            assignment.DueDate);
     }
 }

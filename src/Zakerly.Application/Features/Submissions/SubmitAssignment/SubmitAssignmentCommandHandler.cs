@@ -63,6 +63,11 @@ public class SubmitAssignmentCommandHandler
             throw new ConflictException(
                 "You have already submitted this assignment.");
 
+        // Check deadline
+        if (assignment.DueDate.HasValue && DateTime.UtcNow >= assignment.DueDate.Value)
+            throw new ForbiddenException(
+                "The submission deadline for this assignment has passed.");
+
         var submission = new Submission(
             request.FilePath,
             request.AssignmentId,

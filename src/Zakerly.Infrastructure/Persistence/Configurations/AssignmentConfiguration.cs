@@ -19,6 +19,8 @@ public class AssignmentConfiguration : IEntityTypeConfiguration<Assignment>
         builder.Property(x => x.Description)
             .IsRequired();
 
+        builder.Property(x => x.DueDate);
+
         builder.Property(x => x.CreatedAt)
             .IsRequired();
 

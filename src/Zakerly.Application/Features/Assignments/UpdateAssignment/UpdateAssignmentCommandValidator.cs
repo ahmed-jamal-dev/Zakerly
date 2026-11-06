@@ -15,5 +15,7 @@ public class UpdateAssignmentCommandValidator
 
         RuleFor(x => x.Description)
             .NotEmpty();
+
+        RuleFor(x => x.DueDate);
     }
 }

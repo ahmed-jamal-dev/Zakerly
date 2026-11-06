@@ -11,13 +11,16 @@ public class DeleteSubmissionCommandHandler
     : IRequestHandler<DeleteSubmissionCommand>
 {
     private readonly ISubmissionRepository _submissionRepository;
+    private readonly IAssignmentRepository _assignmentRepository;
     private readonly ICurrentUserService _currentUserService;
 
     public DeleteSubmissionCommandHandler(
         ISubmissionRepository submissionRepository,
+        IAssignmentRepository assignmentRepository,
         ICurrentUserService currentUserService)
     {
         _submissionRepository = submissionRepository;
+        _assignmentRepository = assignmentRepository;
         _currentUserService = currentUserService;
     }
 
@@ -41,6 +44,15 @@ public class DeleteSubmissionCommandHandler
         if (submission.StudentId != _currentUserService.UserId)
             throw new ForbiddenException(
                 "You are not allowed to delete this submission.");
+
+        // Check deadline
+        var assignment = await _assignmentRepository.GetByIdAsync(
+            submission.AssignmentId,
+            cancellationToken);
+
+        if (assignment is not null && assignment.DueDate.HasValue && DateTime.UtcNow >= assignment.DueDate.Value)
+            throw new ForbiddenException(
+                "The submission deadline for this assignment has passed. Submissions cannot be deleted after the deadline.");
 
         await _submissionRepository.DeleteAsync(
             submission,

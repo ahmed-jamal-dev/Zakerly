@@ -8,6 +8,8 @@ public class Assignment : BaseEntity
 
     public Guid CourseId { get; private set; }
 
+    public DateTime? DueDate { get; private set; }
+
     // Navigation Properties
     public Course Course { get; private set; } = null!;
 
@@ -17,19 +19,23 @@ public class Assignment : BaseEntity
     {
     }
 
-    public Assignment(string title, string description, Guid courseId)
+    public Assignment(string title, string description, Guid courseId, DateTime? dueDate = null)
     {
         Title = title;
         Description = description;
         CourseId = courseId;
+        DueDate = dueDate;
         CreatedAt = DateTime.UtcNow;
     }
+
     public void Update(
         string title,
-        string description)
+        string description,
+        DateTime? dueDate)
     {
         Title = title;
         Description = description;
+        DueDate = dueDate;
         UpdatedAt = DateTime.UtcNow;
     }
 }

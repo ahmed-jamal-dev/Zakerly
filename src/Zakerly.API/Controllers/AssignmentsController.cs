@@ -57,7 +57,8 @@ public class AssignmentsController : ControllerBase
         var command = new CreateAssignmentCommand(
             courseId,
             request.Title,
-            request.Description);
+            request.Description,
+            request.DueDate);
 
         var response = await _mediator.Send(
             command,
@@ -78,7 +79,8 @@ public class AssignmentsController : ControllerBase
         var command = new UpdateAssignmentCommand(
             assignmentId,
             request.Title,
-            request.Description);
+            request.Description,
+            request.DueDate);
 
         var result = await _mediator.Send(
             command,

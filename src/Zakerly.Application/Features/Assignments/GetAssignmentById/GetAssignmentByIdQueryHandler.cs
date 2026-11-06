@@ -56,6 +56,7 @@ public class GetAssignmentByIdQueryHandler
             assignment.Id,
             assignment.Title,
             assignment.Description,
-            assignment.CourseId);
+            assignment.CourseId,
+            assignment.DueDate);
     }
 }

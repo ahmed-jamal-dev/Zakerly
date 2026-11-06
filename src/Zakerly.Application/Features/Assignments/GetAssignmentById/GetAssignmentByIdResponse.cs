@@ -4,4 +4,5 @@ public sealed record GetAssignmentByIdResponse(
     Guid AssignmentId,
     string Title,
     string Description,
-    Guid CourseId);
+    Guid CourseId,
+    DateTime? DueDate);
