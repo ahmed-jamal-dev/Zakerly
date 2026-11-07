@@ -25,6 +25,9 @@ public class ZakerlyDbContext : DbContext
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
     
     public DbSet<LessonProgress> LessonProgresses => Set<LessonProgress>();
+
+    public DbSet<Notification> Notifications => Set<Notification>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ZakerlyDbContext).Assembly);

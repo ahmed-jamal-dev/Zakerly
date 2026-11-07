@@ -139,4 +139,15 @@ public class EnrollmentRepository : IEnrollmentRepository
 
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<List<Guid>> GetStudentIdsByCourseIdAsync(
+        Guid courseId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.Enrollments
+            .AsNoTracking()
+            .Where(e => e.CourseId == courseId)
+            .Select(e => e.StudentId)
+            .ToListAsync(cancellationToken);
+    }
 }

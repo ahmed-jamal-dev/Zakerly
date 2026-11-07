@@ -34,4 +34,8 @@ public interface IEnrollmentRepository
 
     Task<long> CountByCourseIdAsync(Guid courseId, CancellationToken cancellationToken);
     Task<List<Enrollment>> GetByCourseIdPagedAsync(Guid courseId, long skip, int take, CancellationToken cancellationToken);
+
+    Task<List<Guid>> GetStudentIdsByCourseIdAsync(
+        Guid courseId,
+        CancellationToken cancellationToken);
 }

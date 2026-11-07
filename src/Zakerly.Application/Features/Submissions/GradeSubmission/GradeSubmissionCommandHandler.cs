@@ -1,7 +1,9 @@
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Zakerly.Application.Common.Exceptions;
 using Zakerly.Application.Common.Interfaces;
 using Zakerly.Domain.Entities;
+using Zakerly.Domain.Enums;
 using Zakerly.Domain.Interfaces.Repositories;
 
 namespace Zakerly.Application.Features.Submissions.GradeSubmission;
@@ -11,15 +13,24 @@ public class GradeSubmissionCommandHandler
 {
     private readonly ISubmissionRepository _submissionRepository;
     private readonly ICourseRepository _courseRepository;
+    private readonly INotificationRepository _notificationRepository;
+    private readonly INotificationService _notificationService;
+    private readonly ILogger<GradeSubmissionCommandHandler> _logger;
     private readonly ICurrentUserService _currentUserService;
 
     public GradeSubmissionCommandHandler(
         ISubmissionRepository submissionRepository,
         ICourseRepository courseRepository,
+        INotificationRepository notificationRepository,
+        INotificationService notificationService,
+        ILogger<GradeSubmissionCommandHandler> logger,
         ICurrentUserService currentUserService)
     {
         _submissionRepository = submissionRepository;
         _courseRepository = courseRepository;
+        _notificationRepository = notificationRepository;
+        _notificationService = notificationService;
+        _logger = logger;
         _currentUserService = currentUserService;
     }
 
@@ -57,9 +68,30 @@ public class GradeSubmissionCommandHandler
             submission,
             cancellationToken);
 
+        // Create notification for the student
+        await CreateNotificationForStudent(submission, cancellationToken);
+
         return new GradeSubmissionResponse(
             submission.Id,
             submission.Grade!.Value,
             submission.Feedback);
+    }
+
+    private async Task CreateNotificationForStudent(
+        Submission submission,
+        CancellationToken cancellationToken)
+    {
+        var notification = new Notification(
+            recipientUserId: submission.StudentId,
+            type: NotificationType.SubmissionGraded,
+            title: "Assignment Graded",
+            message: $"Your submission for assignment '{submission.Assignment.Title}' in course '{submission.Assignment.Course.Title}' has been graded.",
+            relatedEntityId: submission.Id,
+            relatedEntityType: nameof(Submission));
+
+        await _notificationRepository.AddAsync(notification, cancellationToken);
+
+        // Send real-time notification via SignalR
+        await _notificationService.SendNotificationAsync(notification, cancellationToken);
     }
 }
