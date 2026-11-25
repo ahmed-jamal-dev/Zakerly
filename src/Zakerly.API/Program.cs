@@ -6,11 +6,24 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using DotNetEnv;
 using Zakerly.Application;
 using Zakerly.Infrastructure;
 using Zakerly.Infrastructure.Hubs;
 using Zakerly.Infrastructure.Persistence;
 using Zakerly.API.Middleware;
+
+// Load .env from project root by traversing up from content root
+var contentRoot = Directory.GetCurrentDirectory();
+var projectRoot = contentRoot;
+while (!File.Exists(Path.Combine(projectRoot, ".env")) && Directory.GetParent(projectRoot) != null)
+{
+    projectRoot = Directory.GetParent(projectRoot)!.FullName;
+}
+if (File.Exists(Path.Combine(projectRoot, ".env")))
+{
+    Env.Load(Path.Combine(projectRoot, ".env"));
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
