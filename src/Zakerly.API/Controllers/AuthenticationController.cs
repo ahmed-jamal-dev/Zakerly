@@ -9,7 +9,7 @@ using Zakerly.Application.Features.Users.UpdateProfile;
 namespace Zakerly.API.Controllers;
 
 [ApiController]
-[Route("api/auth")]
+[Route("api/v1/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
-    // POST: api/auth/login
+    // POST: api/v1/auth/login
     [HttpPost("login")]
     public async Task<IActionResult> Login(
         [FromBody] LoginCommand command,
@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
-    // GET: api/auth/me
+    // GET: api/v1/auth/me
     [Authorize]
     [HttpGet("me")]
     public IActionResult Me()
@@ -64,7 +64,7 @@ public class AuthController : ControllerBase
         });
     }
 
-    // PUT: api/auth/profile
+    // PUT: api/v1/auth/profile
     [Authorize]
     [HttpPut("profile")]
     public async Task<IActionResult> UpdateProfile(

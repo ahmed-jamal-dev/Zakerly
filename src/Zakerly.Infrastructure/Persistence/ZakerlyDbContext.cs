@@ -23,7 +23,7 @@ public class ZakerlyDbContext : DbContext
     public DbSet<Submission> Submissions => Set<Submission>();
 
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
-    
+
     public DbSet<LessonProgress> LessonProgresses => Set<LessonProgress>();
 
     public DbSet<Notification> Notifications => Set<Notification>();
@@ -31,6 +31,10 @@ public class ZakerlyDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ZakerlyDbContext).Assembly);
+
+        // Global query filter for soft delete - exclude archived courses by default
+        modelBuilder.Entity<Course>()
+            .HasQueryFilter(c => !c.IsArchived);
 
         base.OnModelCreating(modelBuilder);
     }

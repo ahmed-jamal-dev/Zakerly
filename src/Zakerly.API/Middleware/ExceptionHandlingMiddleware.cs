@@ -14,7 +14,7 @@ public class ExceptionHandlingMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, CancellationToken cancellationToken = default)
+    public async Task InvokeAsync(HttpContext context)
     {
         try
         {
@@ -60,7 +60,8 @@ public class ExceptionHandlingMiddleware
         };
 
         await context.Response.WriteAsync(
-            JsonSerializer.Serialize(problem));
+            JsonSerializer.Serialize(problem),
+            context.RequestAborted);
     }
 
     private static string GetTitle(int statusCode)

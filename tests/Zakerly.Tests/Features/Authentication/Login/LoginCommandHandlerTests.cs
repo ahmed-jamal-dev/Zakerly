@@ -3,6 +3,8 @@ using MediatR;
 using Moq;
 using Zakerly.Application.Common.Exceptions;
 using Zakerly.Application.Features.Authentication.Login;
+using Zakerly.Domain.Entities;
+using Zakerly.Domain.Enums;
 using Zakerly.Domain.Interfaces.Repositories;
 using Zakerly.Domain.Interfaces.Security;
 
@@ -20,7 +22,7 @@ public class LoginCommandHandlerTests
         _userRepositoryMock = new Mock<IUserRepository>();
         _passwordHasherMock = new Mock<IPasswordHasher>();
         _jwtProviderMock = new Mock<IJwtProvider>();
-        
+
         _handler = new LoginCommandHandler(
             _userRepositoryMock.Object,
             _passwordHasherMock.Object,
@@ -34,21 +36,18 @@ public class LoginCommandHandlerTests
         var email = "test@example.com";
         var password = "password123";
         var command = new LoginCommand(email, password);
-        
-        var user = new Zakerly.Domain.Entities.User
-        {
-            Id = Guid.NewGuid(),
-            Email = email,
-            FullName = "Test User",
-            PasswordHash = "hashed_password"
-        };
-        
+
+        var user = new User("Test User", email, "hashed_password", UserRole.Student);
+        var userType = typeof(User);
+        var idField = userType.GetProperty("Id");
+        idField!.SetValue(user, Guid.NewGuid());
+
         _userRepositoryMock.Setup(x => x.GetByEmailAsync(email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
-            
+
         _passwordHasherMock.Setup(x => x.Verify(password, user.PasswordHash))
             .Returns(true);
-            
+
         var expectedToken = "valid_jwt_token";
         _jwtProviderMock.Setup(x => x.Generate(user))
             .Returns(expectedToken);
@@ -58,7 +57,7 @@ public class LoginCommandHandlerTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Id.Should().Be(user.Id);
+        result.UserId.Should().Be(user.Id);
         result.FullName.Should().Be(user.FullName);
         result.Email.Should().Be(user.Email);
         result.Token.Should().Be(expectedToken);
@@ -71,9 +70,9 @@ public class LoginCommandHandlerTests
         var email = "nonexistent@example.com";
         var password = "password123";
         var command = new LoginCommand(email, password);
-        
+
         _userRepositoryMock.Setup(x => x.GetByEmailAsync(email, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Zakerly.Domain.Entities.User)null);
+            .ReturnsAsync((User?)null);
 
         // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
@@ -89,18 +88,15 @@ public class LoginCommandHandlerTests
         var email = "test@example.com";
         var password = "wrong_password";
         var command = new LoginCommand(email, password);
-        
-        var user = new Zakerly.Domain.Entities.User
-        {
-            Id = Guid.NewGuid(),
-            Email = email,
-            FullName = "Test User",
-            PasswordHash = "hashed_password"
-        };
-        
+
+        var user = new User("Test User", email, "hashed_password", UserRole.Student);
+        var userType = typeof(User);
+        var idField = userType.GetProperty("Id");
+        idField!.SetValue(user, Guid.NewGuid());
+
         _userRepositoryMock.Setup(x => x.GetByEmailAsync(email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
-            
+
         _passwordHasherMock.Setup(x => x.Verify(password, user.PasswordHash))
             .Returns(false);
 

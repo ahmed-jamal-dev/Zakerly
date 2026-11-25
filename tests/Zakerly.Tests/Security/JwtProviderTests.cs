@@ -15,7 +15,7 @@ public class JwtProviderTests
     public JwtProviderTests()
     {
         _configurationMock = new Mock<IConfiguration>();
-        
+
         // Setup configuration values
         _configurationMock.Setup(x => x["JwtSettings:Key"])
             .Returns("super_secret_key_that_is_long_enough_for_valid_key");
@@ -25,7 +25,7 @@ public class JwtProviderTests
             .Returns("test_audience");
         _configurationMock.Setup(x => x["JwtSettings:ExpiryInMinutes"])
             .Returns("60");
-        
+
         _provider = new JwtProvider(_configurationMock.Object);
     }
 
@@ -33,13 +33,10 @@ public class JwtProviderTests
     public void Generate_Should_ReturnValidToken_When_UserIsValid()
     {
         // Arrange
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Email = "test@example.com",
-            FullName = "Test User",
-            Role = UserRole.Instructor
-        };
+        var user = new User("Test User", "test@example.com", "hashed_password", UserRole.Instructor);
+        var userType = typeof(User);
+        var idField = userType.GetProperty("Id");
+        idField!.SetValue(user, Guid.NewGuid());
 
         // Act
         var token = _provider.Generate(user);

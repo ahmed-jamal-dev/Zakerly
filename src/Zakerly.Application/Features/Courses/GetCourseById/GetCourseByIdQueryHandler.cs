@@ -1,6 +1,7 @@
 using MediatR;
 using Zakerly.Application.Common.Exceptions;
 using Zakerly.Application.Common.Interfaces;
+using Zakerly.Domain.Entities;
 using Zakerly.Domain.Interfaces.Repositories;
 
 namespace Zakerly.Application.Features.Courses.GetCourseById;
@@ -32,7 +33,7 @@ public class GetCourseByIdQueryHandler
 
         if (course is null)
             throw new NotFoundException(
-                nameof(course),
+                nameof(Course),
                 request.CourseId
                 );
 
@@ -46,7 +47,7 @@ public class GetCourseByIdQueryHandler
 
             if (!isOwner && !isEnrolled)
                 throw new NotFoundException(
-                    nameof(course),
+                    nameof(Course),
                     request.CourseId);
         }
 

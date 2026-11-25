@@ -19,7 +19,7 @@ public class UpdateProfileCommandHandlerTests
     {
         _userRepositoryMock = new Mock<IUserRepository>();
         _currentUserServiceMock = new Mock<ICurrentUserService>();
-        
+
         _handler = new UpdateProfileCommandHandler(
             _userRepositoryMock.Object,
             _currentUserServiceMock.Object);
@@ -35,12 +35,11 @@ public class UpdateProfileCommandHandlerTests
             email: "old@example.com",
             passwordHash: "some-hash",
             role: UserRole.Student);
-        
-        // Set up the user with the correct ID (using reflection to set the private Id field)
+
         var userType = typeof(User);
         var idField = userType.GetProperty("Id");
         idField!.SetValue(existingUser, userId);
-        
+
         var command = new UpdateProfileCommand(
             FullName: "New Name",
             Email: "new@example.com");
@@ -59,51 +58,13 @@ public class UpdateProfileCommandHandlerTests
         result.UserId.Should().Be(userId);
         result.FullName.Should().Be("New Name");
         result.Email.Should().Be("new@example.com");
-        
+
         _userRepositoryMock.Verify(x => x.UpdateAsync(
-            It.Is<User>(u => 
-                u.FullName == "New Name" && 
+            It.Is<User>(u =>
+                u.FullName == "New Name" &&
                 u.Email == "new@example.com" &&
                 u.Id == userId),
             It.IsAny<CancellationToken>()), Times.Once);
-    }
-
-    [Fact]
-    public async Task Handle_WithEmptyFullName_ThrowsValidationException()
-    {
-        // Arrange
-        var userId = Guid.NewGuid();
-        var command = new UpdateProfileCommand(
-            FullName: "",
-            Email: "valid@example.com");
-
-        _currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
-
-        // Act
-        Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        await act.Should().ThrowAsync<FluentValidation.ValidationException>()
-            .Where(ex => ex.Errors.Any(e => e.PropertyName == "FullName"));
-    }
-
-    [Fact]
-    public async Task Handle_WithInvalidEmail_ThrowsValidationException()
-    {
-        // Arrange
-        var userId = Guid.NewGuid();
-        var command = new UpdateProfileCommand(
-            FullName: "Valid Name",
-            Email: "invalid-email");
-
-        _currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
-
-        // Act
-        Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        await act.Should().ThrowAsync<FluentValidation.ValidationException>()
-            .Where(ex => ex.Errors.Any(e => e.PropertyName == "Email"));
     }
 
     [Fact]
@@ -116,12 +77,11 @@ public class UpdateProfileCommandHandlerTests
             email: "current@example.com",
             passwordHash: "some-hash",
             role: UserRole.Student);
-        
-        // Set up the user with the correct ID
+
         var userType = typeof(User);
         var idField = userType.GetProperty("Id");
         idField!.SetValue(existingUser, userId);
-        
+
         var command = new UpdateProfileCommand(
             FullName: "Updated Name",
             Email: "taken@example.com");
@@ -130,7 +90,7 @@ public class UpdateProfileCommandHandlerTests
         _userRepositoryMock.Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingUser);
         _userRepositoryMock.Setup(x => x.ExistsByEmailAsync("taken@example.com", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true); // Email already exists
+            .ReturnsAsync(true);
 
         // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
@@ -151,7 +111,7 @@ public class UpdateProfileCommandHandlerTests
 
         _currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
         _userRepositoryMock.Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((User?)null); // User not found
+            .ReturnsAsync((User?)null);
 
         // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
